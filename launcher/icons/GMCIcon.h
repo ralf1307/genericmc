@@ -19,7 +19,7 @@
 #include <QIcon>
 #include <icons/IIconList.h>
 
-struct MMCImage
+struct GMCImage
 {
     QIcon icon;
     QString key;
@@ -30,11 +30,11 @@ struct MMCImage
     }
 };
 
-struct MMCIcon
+struct GMCIcon
 {
     QString m_key;
     QString m_name;
-    MMCImage m_images[ICONS_TOTAL];
+    GMCImage m_images[ICONS_TOTAL];
     IconType m_current_type = ToBeDeleted;
 
     IconType type() const;

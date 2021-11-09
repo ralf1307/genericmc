@@ -20,7 +20,7 @@
 
 #include <QWidget>
 
-#include "MultiMC.h"
+#include "GenericMC.h"
 #include "pages/BasePage.h"
 #include "tasks/Task.h"
 
@@ -44,7 +44,7 @@ public:
     }
     virtual QIcon icon() const override
     {
-        return MMC->getThemedIcon("ftb_logo");
+        return GMC->getThemedIcon("ftb_logo");
     }
     virtual QString id() const override
     {

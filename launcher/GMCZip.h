@@ -24,7 +24,7 @@
 #include <JlCompress.h>
 #include <nonstd/optional>
 
-namespace MMCZip
+namespace GMCZip
 {
 
     /**

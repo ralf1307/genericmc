@@ -2,7 +2,7 @@
 #include "rainbow.h"
 #include <QStyleFactory>
 #include <QDir>
-#include "MultiMC.h"
+#include "GenericMC.h"
 
 void ITheme::apply(bool)
 {
@@ -13,11 +13,11 @@ void ITheme::apply(bool)
     }
     if(hasStyleSheet())
     {
-        MMC->setStyleSheet(appStyleSheet());
+        GMC->setStyleSheet(appStyleSheet());
     }
     else
     {
-        MMC->setStyleSheet(QString());
+        GMC->setStyleSheet(QString());
     }
     QDir::setSearchPaths("theme", searchPaths());
 }

@@ -21,7 +21,7 @@
 #include <QDir>
 #include <QtGui/QIcon>
 #include <memory>
-#include "MMCIcon.h"
+#include "GMCIcon.h"
 #include "settings/Setting.h"
 #include "Env.h" // there is a global icon list inside Env.
 #include <icons/IIconList.h>
@@ -56,7 +56,7 @@ public:
     void installIcons(const QStringList &iconFiles) override;
     void installIcon(const QString &file, const QString &name) override;
 
-    const MMCIcon * icon(const QString &key) const;
+    const GMCIcon * icon(const QString &key) const;
 
     void startWatching();
     void stopWatching();
@@ -81,6 +81,6 @@ private:
     shared_qobject_ptr<QFileSystemWatcher> m_watcher;
     bool is_watching;
     QMap<QString, int> name_index;
-    QVector<MMCIcon> icons;
+    QVector<GMCIcon> icons;
     QDir m_dir;
 };

@@ -1,7 +1,7 @@
 #include "LogPage.h"
 #include "ui_LogPage.h"
 
-#include "MultiMC.h"
+#include "GenericMC.h"
 
 #include <QIcon>
 #include <QScrollBar>
@@ -124,9 +124,9 @@ LogPage::LogPage(InstancePtr instance, QWidget *parent)
 
     // set up fonts in the log proxy
     {
-        QString fontFamily = MMC->settings()->get("ConsoleFont").toString();
+        QString fontFamily = GMC->settings()->get("ConsoleFont").toString();
         bool conversionOk = false;
-        int fontSize = MMC->settings()->get("ConsoleFontSize").toInt(&conversionOk);
+        int fontSize = GMC->settings()->get("ConsoleFontSize").toInt(&conversionOk);
         if(!conversionOk)
         {
             fontSize = 11;
@@ -236,15 +236,15 @@ void LogPage::on_btnPaste_clicked()
         return;
 
     //FIXME: turn this into a proper task and move the upload logic out of GuiUtil!
-    m_model->append(MessageLevel::MultiMC, QString("MultiMC: Log upload triggered at: %1").arg(QDateTime::currentDateTime().toString(Qt::RFC2822Date)));
+    m_model->append(MessageLevel::GenericMC, QString("GenericMC: Log upload triggered at: %1").arg(QDateTime::currentDateTime().toString(Qt::RFC2822Date)));
     auto url = GuiUtil::uploadPaste(m_model->toPlainText(), this);
     if(!url.isEmpty())
     {
-        m_model->append(MessageLevel::MultiMC, QString("MultiMC: Log uploaded to: %1").arg(url));
+        m_model->append(MessageLevel::GenericMC, QString("GenericMC: Log uploaded to: %1").arg(url));
     }
     else
     {
-        m_model->append(MessageLevel::Error, "MultiMC: Log upload failed!");
+        m_model->append(MessageLevel::Error, "GenericMC: Log upload failed!");
     }
 }
 
@@ -252,7 +252,7 @@ void LogPage::on_btnCopy_clicked()
 {
     if(!m_model)
         return;
-    m_model->append(MessageLevel::MultiMC, QString("Clipboard copy at: %1").arg(QDateTime::currentDateTime().toString(Qt::RFC2822Date)));
+    m_model->append(MessageLevel::GenericMC, QString("Clipboard copy at: %1").arg(QDateTime::currentDateTime().toString(Qt::RFC2822Date)));
     GuiUtil::setClipboardText(m_model->toPlainText());
 }
 

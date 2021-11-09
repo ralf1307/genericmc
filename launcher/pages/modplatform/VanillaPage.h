@@ -18,7 +18,7 @@
 #include <QWidget>
 
 #include "pages/BasePage.h"
-#include <MultiMC.h>
+#include <GenericMC.h>
 #include "tasks/Task.h"
 
 namespace Ui
@@ -41,7 +41,7 @@ public:
     }
     virtual QIcon icon() const override
     {
-        return MMC->getThemedIcon("minecraft");
+        return GMC->getThemedIcon("minecraft");
     }
     virtual QString id() const override
     {

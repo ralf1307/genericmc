@@ -34,13 +34,13 @@ JavaUtils::JavaUtils()
 #ifdef Q_OS_LINUX
 static QString processLD_LIBRARY_PATH(const QString & LD_LIBRARY_PATH)
 {
-    QDir mmcBin(QCoreApplication::applicationDirPath());
+    QDir gmcBin(QCoreApplication::applicationDirPath());
     auto items = LD_LIBRARY_PATH.split(':');
     QStringList final;
     for(auto & item: items)
     {
         QDir test(item);
-        if(test == mmcBin)
+        if(test == gmcBin)
         {
             qDebug() << "Env:LD_LIBRARY_PATH ignoring path" << item;
             continue;

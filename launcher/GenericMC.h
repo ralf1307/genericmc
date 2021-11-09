@@ -34,14 +34,13 @@ class BaseDetachedToolFactory;
 class TranslationsModel;
 class ITheme;
 class MCEditTool;
-class GAnalytics;
 
-#if defined(MMC)
-#undef MMC
+#if defined(GMC)
+#undef GMC
 #endif
-#define MMC (static_cast<MultiMC *>(QCoreApplication::instance()))
+#define GMC (static_cast<GenericMC *>(QCoreApplication::instance()))
 
-class MultiMC : public QApplication
+class GenericMC : public QApplication
 {
     // friends for the purpose of limiting access to deprecated stuff
     Q_OBJECT
@@ -55,13 +54,8 @@ public:
     };
 
 public:
-    MultiMC(int &argc, char **argv);
-    virtual ~MultiMC();
-
-    GAnalytics *analytics() const
-    {
-        return m_analytics;
-    }
+    GenericMC(int &argc, char **argv);
+    virtual ~GenericMC();
 
     std::shared_ptr<SettingsObject> settings() const
     {
@@ -165,7 +159,6 @@ private slots:
     void messageReceived(const QString & message);
     void controllerSucceeded();
     void controllerFailed(const QString & error);
-    void analyticsSettingChanged(const Setting &setting, QVariant value);
     void setupWizardFinished(int status);
 
 private:
@@ -198,7 +191,7 @@ private:
     QMap<QString, std::shared_ptr<BaseProfilerFactory>> m_profilers;
 
     QString m_rootPath;
-    Status m_status = MultiMC::StartingUp;
+    Status m_status = GenericMC::StartingUp;
 
 #if defined Q_OS_WIN32
     // used on Windows to attach the standard IO streams
@@ -221,10 +214,9 @@ private:
     // main window, if any
     MainWindow * m_mainWindow = nullptr;
 
-    // peer MultiMC instance connector - used to implement single instance MultiMC and signalling
+    // peer GenericMC instance connector - used to implement single instance GenericMC and signalling
     LocalPeer * m_peerInstance = nullptr;
 
-    GAnalytics * m_analytics = nullptr;
     SetupWizard * m_setupWizard = nullptr;
 public:
     QString m_instanceIdToLaunch;

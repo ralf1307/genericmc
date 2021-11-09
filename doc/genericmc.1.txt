@@ -5,17 +5,17 @@ MULTIMC(1)
 
 NAME
 ----
-multimc - a launcher and instance manager for Minecraft.
+genericmc - a launcher and instance manager for Minecraft.
 
 
 SYNOPSIS
 --------
-*multimc* ['OPTIONS']
+*genericmc* ['OPTIONS']
 
 
 DESCRIPTION
 -----------
-MultiMC is a custom launcher for Minecraft that allows you to easily manage
+GenericMC is a custom launcher for Minecraft that allows you to easily manage
 multiple installations of Minecraft at once. It also allows you to easily
 install and remove mods by simply dragging and dropping.
 Here are the current features of MultiMC.
@@ -23,13 +23,13 @@ Here are the current features of MultiMC.
 OPTIONS
 -------
 *-d, --dir*='DIRECTORY'::
-    Use 'DIRECTORY' as the MultiMC root.
+    Use 'DIRECTORY' as the GenericMC root.
 
 *-l, --launch*='INSTANCE_ID'::
     Launch the instance specified by 'INSTANCE_ID'.
 
 *--alive*::
-    Write a small 'live.check' file after MultiMC starts.
+    Write a small 'live.check' file after GenericMC starts.
 
 *-h, --help*::
     Display help text and exit.
@@ -44,10 +44,6 @@ EXIT STATUS
 
 *1*::
     Failure (syntax or usage error; configuration error; unexpected error).
-
-BUGS
-----
-<https://github.com/MultiMC/MultiMC5/issues>
 
 RESOURCES
 ---------

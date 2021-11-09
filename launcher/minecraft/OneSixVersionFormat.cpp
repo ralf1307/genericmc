@@ -16,11 +16,11 @@ static void readString(const QJsonObject &root, const QString &key, QString &var
 LibraryPtr OneSixVersionFormat::libraryFromJson(ProblemContainer & problems, const QJsonObject &libObj, const QString &filename)
 {
     LibraryPtr out = MojangVersionFormat::libraryFromJson(problems, libObj, filename);
-    readString(libObj, "MMC-hint", out->m_hint);
-    readString(libObj, "MMC-absulute_url", out->m_absoluteURL);
-    readString(libObj, "MMC-absoluteUrl", out->m_absoluteURL);
-    readString(libObj, "MMC-filename", out->m_filename);
-    readString(libObj, "MMC-displayname", out->m_displayname);
+    readString(libObj, "GMC-hint", out->m_hint);
+    readString(libObj, "GMC-absulute_url", out->m_absoluteURL);
+    readString(libObj, "GMC-absoluteUrl", out->m_absoluteURL);
+    readString(libObj, "GMC-filename", out->m_filename);
+    readString(libObj, "GMC-displayname", out->m_displayname);
     return out;
 }
 
@@ -28,13 +28,13 @@ QJsonObject OneSixVersionFormat::libraryToJson(Library *library)
 {
     QJsonObject libRoot = MojangVersionFormat::libraryToJson(library);
     if (library->m_absoluteURL.size())
-        libRoot.insert("MMC-absoluteUrl", library->m_absoluteURL);
+        libRoot.insert("GMC-absoluteUrl", library->m_absoluteURL);
     if (library->m_hint.size())
-        libRoot.insert("MMC-hint", library->m_hint);
+        libRoot.insert("GMC-hint", library->m_hint);
     if (library->m_filename.size())
-        libRoot.insert("MMC-filename", library->m_filename);
+        libRoot.insert("GMC-filename", library->m_filename);
     if (library->m_displayname.size())
-        libRoot.insert("MMC-displayname", library->m_displayname);
+        libRoot.insert("GMC-displayname", library->m_displayname);
     return libRoot;
 }
 

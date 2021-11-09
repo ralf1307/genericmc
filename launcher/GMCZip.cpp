@@ -17,13 +17,13 @@
 #include <quazipdir.h>
 #include <quazipfile.h>
 #include <JlCompress.h>
-#include "MMCZip.h"
+#include "GMCZip.h"
 #include "FileSystem.h"
 
 #include <QDebug>
 
 // ours
-bool MMCZip::mergeZipFiles(QuaZip *into, QFileInfo from, QSet<QString> &contained, const JlCompress::FilterFunction filter)
+bool GMCZip::mergeZipFiles(QuaZip *into, QFileInfo from, QSet<QString> &contained, const JlCompress::FilterFunction filter)
 {
     QuaZip modZip(from.filePath());
     modZip.open(QuaZip::mdUnzip);
@@ -75,7 +75,7 @@ bool MMCZip::mergeZipFiles(QuaZip *into, QFileInfo from, QSet<QString> &containe
 }
 
 // ours
-bool MMCZip::createModdedJar(QString sourceJarPath, QString targetJarPath, const QList<Mod>& mods)
+bool GMCZip::createModdedJar(QString sourceJarPath, QString targetJarPath, const QList<Mod>& mods)
 {
     QuaZip zipOut(targetJarPath);
     if (!zipOut.open(QuaZip::mdCreate))
@@ -168,7 +168,7 @@ bool MMCZip::createModdedJar(QString sourceJarPath, QString targetJarPath, const
 }
 
 // ours
-QString MMCZip::findFolderOfFileInZip(QuaZip * zip, const QString & what, const QString &root)
+QString GMCZip::findFolderOfFileInZip(QuaZip * zip, const QString & what, const QString &root)
 {
     QuaZipDir rootDir(zip, root);
     for(auto fileName: rootDir.entryList(QDir::Files))
@@ -188,7 +188,7 @@ QString MMCZip::findFolderOfFileInZip(QuaZip * zip, const QString & what, const 
 }
 
 // ours
-bool MMCZip::findFilesInZip(QuaZip * zip, const QString & what, QStringList & result, const QString &root)
+bool GMCZip::findFilesInZip(QuaZip * zip, const QString & what, QStringList & result, const QString &root)
 {
     QuaZipDir rootDir(zip, root);
     for(auto fileName: rootDir.entryList(QDir::Files))
@@ -208,7 +208,7 @@ bool MMCZip::findFilesInZip(QuaZip * zip, const QString & what, QStringList & re
 
 
 // ours
-nonstd::optional<QStringList> MMCZip::extractSubDir(QuaZip *zip, const QString & subdir, const QString &target)
+nonstd::optional<QStringList> GMCZip::extractSubDir(QuaZip *zip, const QString & subdir, const QString &target)
 {
     QDir directory(target);
     QStringList extracted;
@@ -255,13 +255,13 @@ nonstd::optional<QStringList> MMCZip::extractSubDir(QuaZip *zip, const QString &
 }
 
 // ours
-bool MMCZip::extractRelFile(QuaZip *zip, const QString &file, const QString &target)
+bool GMCZip::extractRelFile(QuaZip *zip, const QString &file, const QString &target)
 {
     return JlCompress::extractFile(zip, file, target);
 }
 
 // ours
-nonstd::optional<QStringList> MMCZip::extractDir(QString fileCompressed, QString dir)
+nonstd::optional<QStringList> GMCZip::extractDir(QString fileCompressed, QString dir)
 {
     QuaZip zip(fileCompressed);
     if (!zip.open(QuaZip::mdUnzip))
@@ -274,11 +274,11 @@ nonstd::optional<QStringList> MMCZip::extractDir(QString fileCompressed, QString
         qWarning() << "Could not open archive for unzipping:" << fileCompressed << "Error:" << zip.getZipError();;
         return nonstd::nullopt;
     }
-    return MMCZip::extractSubDir(&zip, "", dir);
+    return GMCZip::extractSubDir(&zip, "", dir);
 }
 
 // ours
-nonstd::optional<QStringList> MMCZip::extractDir(QString fileCompressed, QString subdir, QString dir)
+nonstd::optional<QStringList> GMCZip::extractDir(QString fileCompressed, QString subdir, QString dir)
 {
     QuaZip zip(fileCompressed);
     if (!zip.open(QuaZip::mdUnzip))
@@ -291,11 +291,11 @@ nonstd::optional<QStringList> MMCZip::extractDir(QString fileCompressed, QString
         qWarning() << "Could not open archive for unzipping:" << fileCompressed << "Error:" << zip.getZipError();;
         return nonstd::nullopt;
     }
-    return MMCZip::extractSubDir(&zip, subdir, dir);
+    return GMCZip::extractSubDir(&zip, subdir, dir);
 }
 
 // ours
-bool MMCZip::extractFile(QString fileCompressed, QString file, QString target)
+bool GMCZip::extractFile(QString fileCompressed, QString file, QString target)
 {
     QuaZip zip(fileCompressed);
     if (!zip.open(QuaZip::mdUnzip))
@@ -308,5 +308,5 @@ bool MMCZip::extractFile(QString fileCompressed, QString file, QString target)
         qWarning() << "Could not open archive for unzipping:" << fileCompressed << "Error:" << zip.getZipError();
         return false;
     }
-    return MMCZip::extractRelFile(&zip, file, target);
+    return GMCZip::extractRelFile(&zip, file, target);
 }

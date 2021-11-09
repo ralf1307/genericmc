@@ -1,5 +1,5 @@
 #include "VersionProxyModel.h"
-#include "MultiMC.h"
+#include "GenericMC.h"
 #include <QSortFilterProxyModel>
 #include <QPixmapCache>
 #include <Version.h>
@@ -194,19 +194,19 @@ QVariant VersionProxyModel::data(const QModelIndex &index, int role) const
                         auto value = sourceModel()->data(parentIndex, BaseVersionList::RecommendedRole);
                         if(value.toBool())
                         {
-                            return MMC->getThemedIcon("star");
+                            return GMC->getThemedIcon("star");
                         }
                         else if(hasLatest)
                         {
                             auto value = sourceModel()->data(parentIndex, BaseVersionList::LatestRole);
                             if(value.toBool())
                             {
-                                return MMC->getThemedIcon("bug");
+                                return GMC->getThemedIcon("bug");
                             }
                         }
                         else if(index.row() == 0)
                         {
-                            return MMC->getThemedIcon("bug");
+                            return GMC->getThemedIcon("bug");
                         }
                         auto pixmap = QPixmapCache::find("placeholder");
                         if(!pixmap)

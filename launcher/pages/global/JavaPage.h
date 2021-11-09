@@ -19,7 +19,7 @@
 #include <QDialog>
 #include "pages/BasePage.h"
 #include "JavaCommon.h"
-#include <MultiMC.h>
+#include <GenericMC.h>
 #include <QObjectPtr.h>
 
 class SettingsObject;
@@ -43,7 +43,7 @@ public:
     }
     QIcon icon() const override
     {
-        return MMC->getThemedIcon("java");
+        return GMC->getThemedIcon("java");
     }
     QString id() const override
     {

@@ -100,7 +100,7 @@ void PrintInstanceInfo::executeTask()
     ::runGlxinfo(log);
 #endif
 
-    logLines(log, MessageLevel::MultiMC);
-    logLines(instance->verboseDescription(m_session, m_serverToJoin), MessageLevel::MultiMC);
+    logLines(log, MessageLevel::GenericMC);
+    logLines(instance->verboseDescription(m_session, m_serverToJoin), MessageLevel::GenericMC);
     emitSucceeded();
 }

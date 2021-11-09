@@ -31,7 +31,7 @@ void MCModInfoFrame::updateWithMod(Mod &m)
     QString text = "";
     QString name = "";
     if (m.name().isEmpty())
-        name = m.mmc_id();
+        name = m.gmc_id();
     else
         name = m.name();
 

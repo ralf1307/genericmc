@@ -6,6 +6,7 @@ resources/CMakeFiles
 resources/MultiMCLauncher.jar
 *~
 *.swp
+.class
 html/
 
 # Project Files

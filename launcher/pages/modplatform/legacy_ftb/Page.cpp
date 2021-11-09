@@ -3,7 +3,7 @@
 
 #include <QInputDialog>
 
-#include "MultiMC.h"
+#include "GenericMC.h"
 #include "dialogs/CustomMessageBox.h"
 #include "dialogs/NewInstanceDialog.h"
 #include "modplatform/legacy_ftb/PackFetchTask.h"

@@ -20,7 +20,7 @@
 #include <QTextBrowser>
 
 #include "pages/BasePage.h"
-#include <MultiMC.h>
+#include <GenericMC.h>
 #include "tasks/Task.h"
 #include "modplatform/legacy_ftb/PackHelpers.h"
 #include "modplatform/legacy_ftb/PackFetchTask.h"
@@ -54,7 +54,7 @@ public:
     }
     QIcon icon() const override
     {
-        return MMC->getThemedIcon("ftb_logo");
+        return GMC->getThemedIcon("ftb_logo");
     }
     QString id() const override
     {

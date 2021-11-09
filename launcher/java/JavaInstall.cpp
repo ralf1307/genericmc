@@ -1,5 +1,5 @@
 #include "JavaInstall.h"
-#include <MMCStrings.h>
+#include <GMCStrings.h>
 
 bool JavaInstall::operator<(const JavaInstall &rhs)
 {

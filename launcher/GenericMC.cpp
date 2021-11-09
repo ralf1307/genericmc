@@ -1,4 +1,4 @@
-#include "MultiMC.h"
+#include "GenericMC.h"
 #include "BuildConfig.h"
 #include "MainWindow.h"
 #include "InstanceWindow.h"
@@ -7,7 +7,7 @@
 #include <QAccessible>
 
 #include "pages/BasePageProvider.h"
-#include "pages/global/MultiMCPage.h"
+#include "pages/global/GenericMCPage.h"
 #include "pages/global/MinecraftPage.h"
 #include "pages/global/JavaPage.h"
 #include "pages/global/LanguagePage.h"
@@ -26,7 +26,6 @@
 #include "setupwizard/SetupWizard.h"
 #include "setupwizard/LanguageWizardPage.h"
 #include "setupwizard/JavaWizardPage.h"
-#include "setupwizard/AnalyticsWizardPage.h"
 
 #include <iostream>
 #include <QDir>
@@ -66,7 +65,6 @@
 #include <DesktopServices.h>
 #include <LocalPeer.h>
 
-#include <ganalytics.h>
 #include <sys.h>
 
 #include "pagedialog/PageDialog.h"
@@ -87,7 +85,7 @@ static const QLatin1String liveCheckFile("live.check");
 
 using namespace Commandline;
 
-#define MACOS_HINT "If you are on macOS Sierra, you might have to move MultiMC.app to your /Applications or ~/Applications folder. "\
+#define MACOS_HINT "If you are on macOS Sierra, you might have to move GenericMC.app to your /Applications or ~/Applications folder. "\
     "This usually fixes the problem and you can move the application elsewhere afterwards.\n"\
     "\n"
 
@@ -97,7 +95,7 @@ void appDebugOutput(QtMsgType type, const QMessageLogContext &context, const QSt
     const char *levels = "DWCFIS";
     const QString format("%1 %2 %3\n");
 
-    qint64 msecstotal = MMC->timeSinceStart();
+    qint64 msecstotal = GMC->timeSinceStart();
     qint64 seconds = msecstotal / 1000;
     qint64 msecs = msecstotal % 1000;
     QString foo;
@@ -106,8 +104,8 @@ void appDebugOutput(QtMsgType type, const QMessageLogContext &context, const QSt
 
     QString out = format.arg(buf).arg(levels[type]).arg(msg);
 
-    MMC->logFile->write(out.toUtf8());
-    MMC->logFile->flush();
+    GMC->logFile->write(out.toUtf8());
+    GMC->logFile->flush();
     QTextStream(stderr) << out.toLocal8Bit();
     fflush(stderr);
 }
@@ -153,7 +151,7 @@ QString getIdealPlatform(QString currentPlatform) {
 
 }
 
-MultiMC::MultiMC(int &argc, char **argv) : QApplication(argc, argv)
+GenericMC::GenericMC(int &argc, char **argv) : QApplication(argc, argv)
 {
 #if defined Q_OS_WIN32
     // attach the parent console
@@ -179,10 +177,10 @@ MultiMC::MultiMC(int &argc, char **argv) : QApplication(argc, argv)
         consoleAttached = true;
     }
 #endif
-    setOrganizationName("MultiMC");
-    setOrganizationDomain("multimc.org");
-    setApplicationName("MultiMC5");
-    setApplicationDisplayName("MultiMC 5");
+    setOrganizationName("GenericMC");
+    setOrganizationDomain("GenericMC.org");
+    setApplicationName("GenericMC5");
+    setApplicationDisplayName("GenericMC 5");
     setApplicationVersion(BuildConfig.printableVersionString());
 
     startTime = QDateTime::currentDateTime();
@@ -200,7 +198,7 @@ MultiMC::MultiMC(int &argc, char **argv) : QApplication(argc, argv)
                 showFatalErrorMessage(
                     "Unsupported system detected!",
                     "Linux-on-Windows distributions are not supported.\n\n"
-                    "Please use the Windows MultiMC binary when playing on Windows."
+                    "Please use the Windows GenericMC binary when playing on Windows."
                 );
                 return;
             }
@@ -227,7 +225,7 @@ MultiMC::MultiMC(int &argc, char **argv) : QApplication(argc, argv)
         // --dir
         parser.addOption("dir");
         parser.addShortOpt("dir", 'd');
-        parser.addDocumentation("dir", "Use the supplied folder as MultiMC root instead of "
+        parser.addDocumentation("dir", "Use the supplied folder as GenericMC root instead of "
                                        "the binary location (use '.' for current)");
         // --launch
         parser.addOption("launch");
@@ -240,7 +238,7 @@ MultiMC::MultiMC(int &argc, char **argv) : QApplication(argc, argv)
                                           "(only valid in combination with --launch)");
         // --alive
         parser.addSwitch("alive");
-        parser.addDocumentation("alive", "Write a small '" + liveCheckFile + "' file after MultiMC starts");
+        parser.addDocumentation("alive", "Write a small '" + liveCheckFile + "' file after GenericMC starts");
         // --import
         parser.addOption("import");
         parser.addShortOpt("import", 'I');
@@ -255,9 +253,9 @@ MultiMC::MultiMC(int &argc, char **argv) : QApplication(argc, argv)
         {
             std::cerr << "CommandLineError: " << e.what() << std::endl;
             if(argc > 0)
-                std::cerr << "Try '" << argv[0] << " -h' to get help on MultiMC's command line parameters."
+                std::cerr << "Try '" << argv[0] << " -h' to get help on GenericMC's command line parameters."
                           << std::endl;
-            m_status = MultiMC::Failed;
+            m_status = GenericMC::Failed;
             return;
         }
 
@@ -265,7 +263,7 @@ MultiMC::MultiMC(int &argc, char **argv) : QApplication(argc, argv)
         if (args["help"].toBool())
         {
             std::cout << qPrintable(parser.compileHelp(arguments()[0]));
-            m_status = MultiMC::Succeeded;
+            m_status = GenericMC::Succeeded;
             return;
         }
 
@@ -274,7 +272,7 @@ MultiMC::MultiMC(int &argc, char **argv) : QApplication(argc, argv)
         {
             std::cout << "Version " << BuildConfig.printableVersionString().toStdString() << std::endl;
             std::cout << "Git " << BuildConfig.GIT_COMMIT.toStdString() << std::endl;
-            m_status = MultiMC::Succeeded;
+            m_status = GenericMC::Succeeded;
             return;
         }
     }
@@ -291,18 +289,18 @@ MultiMC::MultiMC(int &argc, char **argv) : QApplication(argc, argv)
     QString dirParam = args["dir"].toString();
     if (!dirParam.isEmpty())
     {
-        // the dir param. it makes multimc data path point to whatever the user specified
+        // the dir param. it makes GenericMC data path point to whatever the user specified
         // on command line
         adjustedBy += "Command line " + dirParam;
         dataPath = dirParam;
     }
     else
     {
-#ifdef MULTIMC_LINUX_DATADIR
+#ifdef GenericMC_LINUX_DATADIR
         QString xdgDataHome = QFile::decodeName(qgetenv("XDG_DATA_HOME"));
         if (xdgDataHome.isEmpty())
             xdgDataHome = QDir::homePath() + QLatin1String("/.local/share");
-        dataPath = xdgDataHome + "/multimc";
+        dataPath = xdgDataHome + "/GenericMC";
         adjustedBy += "XDG standard " + dataPath;
 #elif defined(Q_OS_MAC)
         QDir foo(FS::PathCombine(applicationDirPath(), "../../Data"));
@@ -317,30 +315,30 @@ MultiMC::MultiMC(int &argc, char **argv) : QApplication(argc, argv)
     if (!FS::ensureFolderPathExists(dataPath))
     {
         showFatalErrorMessage(
-            "MultiMC data folder could not be created.",
-            "MultiMC data folder could not be created.\n"
+            "GenericMC data folder could not be created.",
+            "GenericMC data folder could not be created.\n"
             "\n"
 #if defined(Q_OS_MAC)
             MACOS_HINT
 #endif
-            "Make sure you have the right permissions to the MultiMC data folder and any folder needed to access it.\n"
+            "Make sure you have the right permissions to the GenericMC data folder and any folder needed to access it.\n"
             "\n"
-            "MultiMC cannot continue until you fix this problem."
+            "GenericMC cannot continue until you fix this problem."
         );
         return;
     }
     if (!QDir::setCurrent(dataPath))
     {
         showFatalErrorMessage(
-            "MultiMC data folder could not be opened.",
-            "MultiMC data folder could not be opened.\n"
+            "GenericMC data folder could not be opened.",
+            "GenericMC data folder could not be opened.\n"
             "\n"
 #if defined(Q_OS_MAC)
             MACOS_HINT
 #endif
-            "Make sure you have the right permissions to the MultiMC data folder.\n"
+            "Make sure you have the right permissions to the GenericMC data folder.\n"
             "\n"
-            "MultiMC cannot continue until you fix this problem."
+            "GenericMC cannot continue until you fix this problem."
         );
         return;
     }
@@ -348,7 +346,7 @@ MultiMC::MultiMC(int &argc, char **argv) : QApplication(argc, argv)
     if(m_instanceIdToLaunch.isEmpty() && !m_serverToJoin.isEmpty())
     {
         std::cerr << "--server can only be used in combination with --launch!" << std::endl;
-        m_status = MultiMC::Failed;
+        m_status = GenericMC::Failed;
         return;
     }
 
@@ -357,18 +355,18 @@ MultiMC::MultiMC(int &argc, char **argv) : QApplication(argc, argv)
     QDir fi(applicationDirPath());
     QString originalData = fi.absolutePath();
     // if the config file exists in Contents/MacOS, then user data is still there and needs to moved
-    if (QFileInfo::exists(FS::PathCombine(originalData, "multimc.cfg")))
+    if (QFileInfo::exists(FS::PathCombine(originalData, "GenericMC.cfg")))
     {
         if (!QFileInfo::exists(FS::PathCombine(originalData, "dontmovemacdata")))
         {
             QMessageBox::StandardButton askMoveDialogue;
-            askMoveDialogue = QMessageBox::question(nullptr, "MultiMC 5", "Would you like to move application data to a new data location? It will improve MultiMC's performance, but if you switch to older versions it will look like instances have disappeared. If you select no, you can migrate later in settings. You should select yes unless you're commonly switching between different versions of MultiMC (eg. develop and stable).", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+            askMoveDialogue = QMessageBox::question(nullptr, "GenericMC 5", "Would you like to move application data to a new data location? It will improve GenericMC's performance, but if you switch to older versions it will look like instances have disappeared. If you select no, you can migrate later in settings. You should select yes unless you're commonly switching between different versions of GenericMC (eg. develop and stable).", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
             if (askMoveDialogue == QMessageBox::Yes)
             {
                 qDebug() << "On macOS and found config file in old location, moving user data...";
                 QDir dir;
                 QStringList dataFiles {
-                    "*.log", // MultiMC-@.log
+                    "*.log", // GenericMC-@.log
                     "accounts.json",
                     "accounts",
                     "assets",
@@ -379,7 +377,7 @@ MultiMC::MultiMC(int &argc, char **argv) : QApplication(argc, argv)
                     "meta",
                     "metacache",
                     "mods",
-                    "multimc.cfg",
+                    "GenericMC.cfg",
                     "themes",
                     "translations"
                 };
@@ -410,7 +408,7 @@ MultiMC::MultiMC(int &argc, char **argv) : QApplication(argc, argv)
 #endif
 
     /*
-     * Establish the mechanism for communication with an already running MultiMC that uses the same data path.
+     * Establish the mechanism for communication with an already running GenericMC that uses the same data path.
      * If there is one, tell it what the user actually wanted to do and exit.
      * We want to initialize this before logging to avoid messing with the log of a potential already running copy.
      */
@@ -418,7 +416,7 @@ MultiMC::MultiMC(int &argc, char **argv) : QApplication(argc, argv)
     {
         // FIXME: you can run the same binaries with multiple data dirs and they won't clash. This could cause issues for updates.
         m_peerInstance = new LocalPeer(this, appID);
-        connect(m_peerInstance, &LocalPeer::messageReceived, this, &MultiMC::messageReceived);
+        connect(m_peerInstance, &LocalPeer::messageReceived, this, &GenericMC::messageReceived);
         if(m_peerInstance->isClient())
         {
             int timeout = 2000;
@@ -444,14 +442,14 @@ MultiMC::MultiMC(int &argc, char **argv) : QApplication(argc, argv)
                     m_peerInstance->sendMessage("launch " + m_instanceIdToLaunch, timeout);
                 }
             }
-            m_status = MultiMC::Succeeded;
+            m_status = GenericMC::Succeeded;
             return;
         }
     }
 
     // init the logger
     {
-        static const QString logBase = "MultiMC-%0.log";
+        static const QString logBase = "GenericMC-%0.log";
         auto moveFile = [](const QString &oldName, const QString &newName)
         {
             QFile::remove(newName);
@@ -468,15 +466,15 @@ MultiMC::MultiMC(int &argc, char **argv) : QApplication(argc, argv)
         if(!logFile->open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
         {
             showFatalErrorMessage(
-                "MultiMC data folder is not writable!",
-                "MultiMC couldn't create a log file - the MultiMC data folder is not writable.\n"
+                "GenericMC data folder is not writable!",
+                "GenericMC couldn't create a log file - the GenericMC data folder is not writable.\n"
                 "\n"
     #if defined(Q_OS_MAC)
                 MACOS_HINT
     #endif
-                "Make sure you have write permissions to the MultiMC data folder.\n"
+                "Make sure you have write permissions to the GenericMC data folder.\n"
                 "\n"
-                "MultiMC cannot continue until you fix this problem."
+                "GenericMC cannot continue until you fix this problem."
             );
             return;
         }
@@ -499,11 +497,11 @@ MultiMC::MultiMC(int &argc, char **argv) : QApplication(argc, argv)
         FS::updateTimestamp(m_rootPath);
 #endif
 
-#ifdef MULTIMC_JARS_LOCATION
-        ENV.setJarsPath( TOSTRING(MULTIMC_JARS_LOCATION) );
+#ifdef GenericMC_JARS_LOCATION
+        ENV.setJarsPath( TOSTRING(GenericMC_JARS_LOCATION) );
 #endif
 
-        qDebug() << "MultiMC 5, (c) 2013-2021 MultiMC Contributors";
+        qDebug() << "GenericMC 5, (c) 2013-2021 GenericMC Contributors";
         qDebug() << "Version                    : " << BuildConfig.printableVersionString();
         qDebug() << "Git commit                 : " << BuildConfig.GIT_COMMIT;
         qDebug() << "Git refspec                : " << BuildConfig.GIT_REFSPEC;
@@ -553,13 +551,13 @@ MultiMC::MultiMC(int &argc, char **argv) : QApplication(argc, argv)
 
     // Initialize application settings
     {
-        m_settings.reset(new INISettingsObject("multimc.cfg", this));
+        m_settings.reset(new INISettingsObject("GenericMC.cfg", this));
         // Updates
         m_settings->registerSetting("UpdateChannel", BuildConfig.VERSION_CHANNEL);
         m_settings->registerSetting("AutoUpdate", true);
 
         // Theming
-        m_settings->registerSetting("IconTheme", QString("multimc"));
+        m_settings->registerSetting("IconTheme", QString("GenericMC"));
         m_settings->registerSetting("ApplicationTheme", QString("system"));
 
         // Notifications
@@ -678,20 +676,12 @@ MultiMC::MultiMC(int &argc, char **argv) : QApplication(argc, argv)
         m_settings->registerSetting("UpdateDialogGeometry", "");
 
         // paste.ee API key
-        m_settings->registerSetting("PasteEEAPIKey", "multimc");
-
-        if(!BuildConfig.ANALYTICS_ID.isEmpty())
-        {
-            // Analytics
-            m_settings->registerSetting("Analytics", true);
-            m_settings->registerSetting("AnalyticsSeen", 0);
-            m_settings->registerSetting("AnalyticsClientID", QString());
-        }
+        m_settings->registerSetting("PasteEEAPIKey", "GenericMC");
 
         // Init page provider
         {
             m_globalSettingsProvider = std::make_shared<GenericPageProvider>(tr("Settings"));
-            m_globalSettingsProvider->addPage<MultiMCPage>();
+            m_globalSettingsProvider->addPage<GenericMCPage>();
             m_globalSettingsProvider->addPage<MinecraftPage>();
             m_globalSettingsProvider->addPage<JavaPage>();
             m_globalSettingsProvider->addPage<LanguagePage>();
@@ -729,13 +719,13 @@ MultiMC::MultiMC(int &argc, char **argv) : QApplication(argc, argv)
 
     // Instance icons
     {
-        auto setting = MMC->settings()->getSetting("IconsDir");
+        auto setting = GMC->settings()->getSetting("IconsDir");
         QStringList instFolders =
         {
-            ":/icons/multimc/32x32/instances/",
-            ":/icons/multimc/50x50/instances/",
-            ":/icons/multimc/128x128/instances/",
-            ":/icons/multimc/scalable/instances/"
+            ":/icons/GenericMC/32x32/instances/",
+            ":/icons/GenericMC/50x50/instances/",
+            ":/icons/GenericMC/128x128/instances/",
+            ":/icons/GenericMC/scalable/instances/"
         };
         m_icons.reset(new IconList(instFolders, setting->get().toString()));
         connect(setting.get(), &Setting::SettingChanged,[&](const Setting &, QVariant value)
@@ -830,7 +820,7 @@ MultiMC::MultiMC(int &argc, char **argv) : QApplication(argc, argv)
         m_mcedit.reset(new MCEditTool(m_settings));
     }
 
-    connect(this, &MultiMC::aboutToQuit, [this](){
+    connect(this, &GenericMC::aboutToQuit, [this](){
         if(m_instances)
         {
             // save any remaining instance state
@@ -850,45 +840,6 @@ MultiMC::MultiMC(int &argc, char **argv) : QApplication(argc, argv)
         qDebug() << "<> Application theme set.";
     }
 
-    // Initialize analytics
-    [this]()
-    {
-        const int analyticsVersion = 2;
-        if(BuildConfig.ANALYTICS_ID.isEmpty())
-        {
-            return;
-        }
-
-        auto analyticsSetting = m_settings->getSetting("Analytics");
-        connect(analyticsSetting.get(), &Setting::SettingChanged, this, &MultiMC::analyticsSettingChanged);
-        QString clientID = m_settings->get("AnalyticsClientID").toString();
-        if(clientID.isEmpty())
-        {
-            clientID = QUuid::createUuid().toString();
-            clientID.remove(QLatin1Char('{'));
-            clientID.remove(QLatin1Char('}'));
-            m_settings->set("AnalyticsClientID", clientID);
-        }
-        m_analytics = new GAnalytics(BuildConfig.ANALYTICS_ID, clientID, analyticsVersion, this);
-        m_analytics->setLogLevel(GAnalytics::Debug);
-        m_analytics->setAnonymizeIPs(true);
-        m_analytics->setNetworkAccessManager(&ENV.qnam());
-
-        if(m_settings->get("AnalyticsSeen").toInt() < m_analytics->version())
-        {
-            qDebug() << "Analytics info not seen by user yet (or old version).";
-            return;
-        }
-        if(!m_settings->get("Analytics").toBool())
-        {
-            qDebug() << "Analytics disabled by user.";
-            return;
-        }
-
-        m_analytics->enable();
-        qDebug() << "<> Initialized analytics with tid" << BuildConfig.ANALYTICS_ID;
-    }();
-
     if(createSetupWizard())
     {
         return;
@@ -896,7 +847,7 @@ MultiMC::MultiMC(int &argc, char **argv) : QApplication(argc, argv)
     performMainStartupAction();
 }
 
-bool MultiMC::createSetupWizard()
+bool GenericMC::createSetupWizard()
 {
     bool javaRequired = [&]()
     {
@@ -915,29 +866,13 @@ bool MultiMC::createSetupWizard()
         }
         return false;
     }();
-    bool analyticsRequired = [&]()
-    {
-        if(BuildConfig.ANALYTICS_ID.isEmpty())
-        {
-            return false;
-        }
-        if (!settings()->get("Analytics").toBool())
-        {
-            return false;
-        }
-        if (settings()->get("AnalyticsSeen").toInt() < analytics()->version())
-        {
-            return true;
-        }
-        return false;
-    }();
     bool languageRequired = [&]()
     {
         if (settings()->get("Language").toString().isEmpty())
             return true;
         return false;
     }();
-    bool wizardRequired = javaRequired || analyticsRequired || languageRequired;
+    bool wizardRequired = javaRequired || languageRequired;
 
     if(wizardRequired)
     {
@@ -950,26 +885,22 @@ bool MultiMC::createSetupWizard()
         {
             m_setupWizard->addPage(new JavaWizardPage(m_setupWizard));
         }
-        if(analyticsRequired)
-        {
-            m_setupWizard->addPage(new AnalyticsWizardPage(m_setupWizard));
-        }
-        connect(m_setupWizard, &QDialog::finished, this, &MultiMC::setupWizardFinished);
+        connect(m_setupWizard, &QDialog::finished, this, &GenericMC::setupWizardFinished);
         m_setupWizard->show();
         return true;
     }
     return false;
 }
 
-void MultiMC::setupWizardFinished(int status)
+void GenericMC::setupWizardFinished(int status)
 {
     qDebug() << "Wizard result =" << status;
     performMainStartupAction();
 }
 
-void MultiMC::performMainStartupAction()
+void GenericMC::performMainStartupAction()
 {
-    m_status = MultiMC::Initialized;
+    m_status = GenericMC::Initialized;
     if(!m_instanceIdToLaunch.isEmpty())
     {
         auto inst = instances()->getInstanceById(m_instanceIdToLaunch);
@@ -1004,14 +935,14 @@ void MultiMC::performMainStartupAction()
     }
 }
 
-void MultiMC::showFatalErrorMessage(const QString& title, const QString& content)
+void GenericMC::showFatalErrorMessage(const QString& title, const QString& content)
 {
-    m_status = MultiMC::Failed;
+    m_status = GenericMC::Failed;
     auto dialog = CustomMessageBox::selectable(nullptr, title, content, QMessageBox::Critical);
     dialog->exec();
 }
 
-MultiMC::~MultiMC()
+GenericMC::~GenericMC()
 {
     // kill the other globals.
     Env::dispose();
@@ -1031,7 +962,7 @@ MultiMC::~MultiMC()
 #endif
 }
 
-void MultiMC::messageReceived(const QString& message)
+void GenericMC::messageReceived(const QString& message)
 {
     if(status() != Initialized)
     {
@@ -1100,28 +1031,12 @@ void MultiMC::messageReceived(const QString& message)
     }
 }
 
-void MultiMC::analyticsSettingChanged(const Setting&, QVariant value)
-{
-    if(!m_analytics)
-        return;
-    bool enabled = value.toBool();
-    if(enabled)
-    {
-        qDebug() << "Analytics enabled by user.";
-    }
-    else
-    {
-        qDebug() << "Analytics disabled by user.";
-    }
-    m_analytics->enable(enabled);
-}
-
-std::shared_ptr<TranslationsModel> MultiMC::translations()
+std::shared_ptr<TranslationsModel> GenericMC::translations()
 {
     return m_translations;
 }
 
-std::shared_ptr<JavaInstallList> MultiMC::javalist()
+std::shared_ptr<JavaInstallList> GenericMC::javalist()
 {
     if (!m_javalist)
     {
@@ -1130,7 +1045,7 @@ std::shared_ptr<JavaInstallList> MultiMC::javalist()
     return m_javalist;
 }
 
-std::vector<ITheme *> MultiMC::getValidApplicationThemes()
+std::vector<ITheme *> GenericMC::getValidApplicationThemes()
 {
     std::vector<ITheme *> ret;
     auto iter = m_themes.cbegin();
@@ -1142,7 +1057,7 @@ std::vector<ITheme *> MultiMC::getValidApplicationThemes()
     return ret;
 }
 
-void MultiMC::setApplicationTheme(const QString& name, bool initial)
+void GenericMC::setApplicationTheme(const QString& name, bool initial)
 {
     auto systemPalette = qApp->palette();
     auto themeIter = m_themes.find(name);
@@ -1157,17 +1072,17 @@ void MultiMC::setApplicationTheme(const QString& name, bool initial)
     }
 }
 
-void MultiMC::setIconTheme(const QString& name)
+void GenericMC::setIconTheme(const QString& name)
 {
     XdgIcon::setThemeName(name);
 }
 
-QIcon MultiMC::getThemedIcon(const QString& name)
+QIcon GenericMC::getThemedIcon(const QString& name)
 {
     return XdgIcon::fromTheme(name);
 }
 
-bool MultiMC::openJsonEditor(const QString &filename)
+bool GenericMC::openJsonEditor(const QString &filename)
 {
     const QString file = QDir::current().absoluteFilePath(filename);
     if (m_settings->get("JsonEditor").toString().isEmpty())
@@ -1181,7 +1096,7 @@ bool MultiMC::openJsonEditor(const QString &filename)
     }
 }
 
-bool MultiMC::launch(
+bool GenericMC::launch(
         InstancePtr instance,
         bool online,
         BaseProfilerFactory *profiler,
@@ -1216,8 +1131,8 @@ bool MultiMC::launch(
         {
             controller->setParentWidget(m_mainWindow);
         }
-        connect(controller.get(), &LaunchController::succeeded, this, &MultiMC::controllerSucceeded);
-        connect(controller.get(), &LaunchController::failed, this, &MultiMC::controllerFailed);
+        connect(controller.get(), &LaunchController::succeeded, this, &GenericMC::controllerSucceeded);
+        connect(controller.get(), &LaunchController::failed, this, &GenericMC::controllerFailed);
         addRunningInstance();
         controller->start();
         return true;
@@ -1235,7 +1150,7 @@ bool MultiMC::launch(
     return false;
 }
 
-bool MultiMC::kill(InstancePtr instance)
+bool GenericMC::kill(InstancePtr instance)
 {
     if (!instance->isRunning())
     {
@@ -1252,7 +1167,7 @@ bool MultiMC::kill(InstancePtr instance)
     return true;
 }
 
-void MultiMC::addRunningInstance()
+void GenericMC::addRunningInstance()
 {
     m_runningInstances ++;
     if(m_runningInstances == 1)
@@ -1261,7 +1176,7 @@ void MultiMC::addRunningInstance()
     }
 }
 
-void MultiMC::subRunningInstance()
+void GenericMC::subRunningInstance()
 {
     if(m_runningInstances == 0)
     {
@@ -1275,23 +1190,23 @@ void MultiMC::subRunningInstance()
     }
 }
 
-bool MultiMC::shouldExitNow() const
+bool GenericMC::shouldExitNow() const
 {
     return m_runningInstances == 0 && m_openWindows == 0;
 }
 
-bool MultiMC::updatesAreAllowed()
+bool GenericMC::updatesAreAllowed()
 {
     return m_runningInstances == 0;
 }
 
-void MultiMC::updateIsRunning(bool running)
+void GenericMC::updateIsRunning(bool running)
 {
     m_updateRunning = running;
 }
 
 
-void MultiMC::controllerSucceeded()
+void GenericMC::controllerSucceeded()
 {
     auto controller = qobject_cast<LaunchController *>(QObject::sender());
     if(!controller)
@@ -1318,7 +1233,7 @@ void MultiMC::controllerSucceeded()
     }
 }
 
-void MultiMC::controllerFailed(const QString& error)
+void GenericMC::controllerFailed(const QString& error)
 {
     Q_UNUSED(error);
     auto controller = qobject_cast<LaunchController *>(QObject::sender());
@@ -1339,21 +1254,21 @@ void MultiMC::controllerFailed(const QString& error)
     }
 }
 
-void MultiMC::ShowGlobalSettings(class QWidget* parent, QString open_page)
+void GenericMC::ShowGlobalSettings(class QWidget* parent, QString open_page)
 {
     if(!m_globalSettingsProvider) {
         return;
     }
     emit globalSettingsAboutToOpen();
     {
-        SettingsObject::Lock lock(MMC->settings());
+        SettingsObject::Lock lock(GMC->settings());
         PageDialog dlg(m_globalSettingsProvider.get(), open_page, parent);
         dlg.exec();
     }
     emit globalSettingsClosed();
 }
 
-MainWindow* MultiMC::showMainWindow(bool minimized)
+MainWindow* GenericMC::showMainWindow(bool minimized)
 {
     if(m_mainWindow)
     {
@@ -1364,8 +1279,8 @@ MainWindow* MultiMC::showMainWindow(bool minimized)
     else
     {
         m_mainWindow = new MainWindow();
-        m_mainWindow->restoreState(QByteArray::fromBase64(MMC->settings()->get("MainWindowState").toByteArray()));
-        m_mainWindow->restoreGeometry(QByteArray::fromBase64(MMC->settings()->get("MainWindowGeometry").toByteArray()));
+        m_mainWindow->restoreState(QByteArray::fromBase64(GMC->settings()->get("MainWindowState").toByteArray()));
+        m_mainWindow->restoreGeometry(QByteArray::fromBase64(GMC->settings()->get("MainWindowGeometry").toByteArray()));
         if(minimized)
         {
             m_mainWindow->showMinimized();
@@ -1376,68 +1291,14 @@ MainWindow* MultiMC::showMainWindow(bool minimized)
         }
 
         m_mainWindow->checkInstancePathForProblems();
-        connect(this, &MultiMC::updateAllowedChanged, m_mainWindow, &MainWindow::updatesAllowedChanged);
-        connect(m_mainWindow, &MainWindow::isClosing, this, &MultiMC::on_windowClose);
+        connect(this, &GenericMC::updateAllowedChanged, m_mainWindow, &MainWindow::updatesAllowedChanged);
+        connect(m_mainWindow, &MainWindow::isClosing, this, &GenericMC::on_windowClose);
         m_openWindows++;
-    }
-    // FIXME: move this somewhere else...
-    if(m_analytics)
-    {
-        auto windowSize = m_mainWindow->size();
-        auto sizeString = QString("%1x%2").arg(windowSize.width()).arg(windowSize.height());
-        qDebug() << "Viewport size" << sizeString;
-        m_analytics->setViewportSize(sizeString);
-        /*
-         * cm1 = java min heap [MB]
-         * cm2 = java max heap [MB]
-         * cm3 = system RAM [MB]
-         *
-         * cd1 = java version
-         * cd2 = java architecture
-         * cd3 = system architecture
-         * cd4 = CPU architecture
-         */
-        QVariantMap customValues;
-        int min = m_settings->get("MinMemAlloc").toInt();
-        int max = m_settings->get("MaxMemAlloc").toInt();
-        if(min < max)
-        {
-            customValues["cm1"] = min;
-            customValues["cm2"] = max;
-        }
-        else
-        {
-            customValues["cm1"] = max;
-            customValues["cm2"] = min;
-        }
-
-        constexpr uint64_t Mega = 1024ull * 1024ull;
-        int ramSize = int(Sys::getSystemRam() / Mega);
-        qDebug() << "RAM size is" << ramSize << "MB";
-        customValues["cm3"] = ramSize;
-
-        customValues["cd1"] = m_settings->get("JavaVersion");
-        customValues["cd2"] = m_settings->get("JavaArchitecture");
-        customValues["cd3"] = Sys::isSystem64bit() ? "64":"32";
-        customValues["cd4"] = Sys::isCPU64bit() ? "64":"32";
-        auto kernelInfo = Sys::getKernelInfo();
-        customValues["cd5"] = kernelInfo.kernelName;
-        customValues["cd6"] = kernelInfo.kernelVersion;
-        auto distInfo = Sys::getDistributionInfo();
-        if(!distInfo.distributionName.isEmpty())
-        {
-            customValues["cd7"] = distInfo.distributionName;
-        }
-        if(!distInfo.distributionVersion.isEmpty())
-        {
-            customValues["cd8"] = distInfo.distributionVersion;
-        }
-        m_analytics->sendScreenView("Main Window", customValues);
     }
     return m_mainWindow;
 }
 
-InstanceWindow *MultiMC::showInstanceWindow(InstancePtr instance, QString page)
+InstanceWindow *GenericMC::showInstanceWindow(InstancePtr instance, QString page)
 {
     if(!instance)
         return nullptr;
@@ -1454,7 +1315,7 @@ InstanceWindow *MultiMC::showInstanceWindow(InstancePtr instance, QString page)
     {
         window = new InstanceWindow(instance);
         m_openWindows ++;
-        connect(window, &InstanceWindow::isClosing, this, &MultiMC::on_windowClose);
+        connect(window, &InstanceWindow::isClosing, this, &GenericMC::on_windowClose);
     }
     if(!page.isEmpty())
     {
@@ -1467,7 +1328,7 @@ InstanceWindow *MultiMC::showInstanceWindow(InstancePtr instance, QString page)
     return window;
 }
 
-void MultiMC::on_windowClose()
+void GenericMC::on_windowClose()
 {
     m_openWindows--;
     auto instWindow = qobject_cast<InstanceWindow *>(QObject::sender());

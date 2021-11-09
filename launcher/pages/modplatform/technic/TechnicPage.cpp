@@ -16,7 +16,7 @@
 #include "TechnicPage.h"
 #include "ui_TechnicPage.h"
 
-#include "MultiMC.h"
+#include "GenericMC.h"
 #include "dialogs/NewInstanceDialog.h"
 #include "TechnicModel.h"
 #include <QKeyEvent>
@@ -111,7 +111,7 @@ void TechnicPage::suggestCurrent()
     NetJob *netJob = new NetJob(QString("Technic::PackMeta(%1)").arg(current.name));
     std::shared_ptr<QByteArray> response = std::make_shared<QByteArray>();
     QString slug = current.slug;
-    netJob->addNetAction(Net::Download::makeByteArray(QString("https://api.technicpack.net/modpack/%1?build=multimc").arg(slug), response.get()));
+    netJob->addNetAction(Net::Download::makeByteArray(QString("https://api.technicpack.net/modpack/%1?build=genericmc").arg(slug), response.get()));
     QObject::connect(netJob, &NetJob::succeeded, this, [this, response, slug]
     {
         if (current.slug != slug)

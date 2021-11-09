@@ -1,7 +1,7 @@
 #include <Env.h>
 #include <quazip.h>
 #include <QtConcurrent/QtConcurrent>
-#include <MMCZip.h>
+#include <GMCZip.h>
 #include <minecraft/OneSixVersionFormat.h>
 #include <Version.h>
 #include <net/ChecksumValidator.h>
@@ -455,7 +455,7 @@ void PackInstallTask::extractConfigs()
         return;
     }
 
-    m_extractFuture = QtConcurrent::run(QThreadPool::globalInstance(), MMCZip::extractDir, archivePath, extractDir.absolutePath() + "/minecraft");
+    m_extractFuture = QtConcurrent::run(QThreadPool::globalInstance(), GMCZip::extractDir, archivePath, extractDir.absolutePath() + "/minecraft");
     connect(&m_extractFutureWatcher, &QFutureWatcher<QStringList>::finished, this, [&]()
     {
         downloadMods();
@@ -659,7 +659,7 @@ bool PackInstallTask::extractMods(
         }
 
         qDebug() << "Extracting " + mod.file + " to " + extractToDir;
-        if(!MMCZip::extractDir(modPath, folderToExtract, extractToPath)) {
+        if(!GMCZip::extractDir(modPath, folderToExtract, extractToPath)) {
             // assume error
             return false;
         }
@@ -674,7 +674,7 @@ bool PackInstallTask::extractMods(
         auto extractToPath = FS::PathCombine(extractDir.absolutePath(), "minecraft", extractToDir, mod.decompFile);
 
         qDebug() << "Extracting " + mod.decompFile + " to " + extractToDir;
-        if(!MMCZip::extractFile(modPath, mod.decompFile, extractToPath)) {
+        if(!GMCZip::extractFile(modPath, mod.decompFile, extractToPath)) {
             qWarning() << "Failed to extract" << mod.decompFile;
             return false;
         }

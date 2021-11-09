@@ -1,7 +1,7 @@
 #include "VanillaPage.h"
 #include "ui_VanillaPage.h"
 
-#include "MultiMC.h"
+#include "GenericMC.h"
 
 #include <meta/Index.h>
 #include <meta/VersionList.h>

@@ -24,10 +24,10 @@ set(CORE_SOURCES
     BaseInstance.h
     BaseInstance.cpp
     NullInstance.h
-    MMCZip.h
-    MMCZip.cpp
-    MMCStrings.h
-    MMCStrings.cpp
+    GMCZip.h
+    GMCZip.cpp
+    GMCStrings.h
+    GMCStrings.cpp
 
     # Basic instance manipulation tasks (derived from InstanceTask)
     InstanceCreationTask.h
@@ -88,13 +88,13 @@ set(CORE_SOURCES
 
 add_unit_test(FileSystem
     SOURCES FileSystem_test.cpp
-    LIBS MultiMC_logic
+    LIBS GENERICMC_logic
     DATA testdata
     )
 
 add_unit_test(GZip
     SOURCES GZip_test.cpp
-    LIBS MultiMC_logic
+    LIBS GENERICMC_logic
     )
 
 set(PATHMATCHER_SOURCES
@@ -158,13 +158,13 @@ set(UPDATE_SOURCES
 
 add_unit_test(UpdateChecker
     SOURCES updater/UpdateChecker_test.cpp
-    LIBS MultiMC_logic
+    LIBS GENERICMC_logic
     DATA updater/testdata
     )
 
 add_unit_test(DownloadTask
     SOURCES updater/DownloadTask_test.cpp
-    LIBS MultiMC_logic
+    LIBS GENERICMC_logic
     DATA updater/testdata
     )
 
@@ -337,14 +337,14 @@ set(MINECRAFT_SOURCES
 
 add_unit_test(GradleSpecifier
     SOURCES minecraft/GradleSpecifier_test.cpp
-    LIBS MultiMC_logic
+    LIBS GENERICMC_logic
     )
 
 add_executable(PackageManifest
     mojang/PackageManifest_test.cpp
 )
 target_link_libraries(PackageManifest
-    MultiMC_logic
+    GENERICMC_logic
     Qt5::Test
 )
 target_include_directories(PackageManifest
@@ -358,25 +358,25 @@ add_test(
 
 add_unit_test(MojangVersionFormat
     SOURCES minecraft/MojangVersionFormat_test.cpp
-    LIBS MultiMC_logic
+    LIBS GENERICMC_logic
     DATA minecraft/testdata
     )
 
 add_unit_test(Library
     SOURCES minecraft/Library_test.cpp
-    LIBS MultiMC_logic
+    LIBS GENERICMC_logic
     )
 
 # FIXME: shares data with FileSystem test
 add_unit_test(ModFolderModel
     SOURCES minecraft/mod/ModFolderModel_test.cpp
     DATA testdata
-    LIBS MultiMC_logic
+    LIBS GENERICMC_logic
     )
 
 add_unit_test(ParseUtils
     SOURCES minecraft/ParseUtils_test.cpp
-    LIBS MultiMC_logic
+    LIBS GENERICMC_logic
     )
 
 # the screenshots feature
@@ -414,7 +414,7 @@ set(SETTINGS_SOURCES
 
 add_unit_test(INIFile
     SOURCES settings/INIFile_test.cpp
-    LIBS MultiMC_logic
+    LIBS GENERICMC_logic
     )
 
 set(JAVA_SOURCES
@@ -437,7 +437,7 @@ set(JAVA_SOURCES
 
 add_unit_test(JavaVersion
     SOURCES java/JavaVersion_test.cpp
-    LIBS MultiMC_logic
+    LIBS GENERICMC_logic
     )
 
 set(TRANSLATIONS_SOURCES
@@ -523,7 +523,7 @@ set(ATLAUNCHER_SOURCES
 
 add_unit_test(Index
     SOURCES meta/Index_test.cpp
-    LIBS MultiMC_logic
+    LIBS GENERICMC_logic
     )
 
 ################################ COMPILE ################################
@@ -555,10 +555,10 @@ set(LOGIC_SOURCES
     ${ATLAUNCHER_SOURCES}
 )
 
-SET(MULTIMC_SOURCES
+SET(GENERICMC_SOURCES
     # Application base
-    MultiMC.h
-    MultiMC.cpp
+    GenericMC.h
+    GenericMC.cpp
     UpdateController.cpp
     UpdateController.h
 
@@ -582,8 +582,8 @@ SET(MULTIMC_SOURCES
     KonamiCode.cpp
 
     # Icons
-    icons/MMCIcon.h
-    icons/MMCIcon.cpp
+    icons/GMCIcon.h
+    icons/GMCIcon.cpp
     icons/IconList.h
     icons/IconList.cpp
 
@@ -676,8 +676,8 @@ SET(MULTIMC_SOURCES
     pages/global/LanguagePage.h
     pages/global/MinecraftPage.cpp
     pages/global/MinecraftPage.h
-    pages/global/MultiMCPage.cpp
-    pages/global/MultiMCPage.h
+    pages/global/GenericMCPage.cpp
+    pages/global/GenericMCPage.h
     pages/global/ProxyPage.cpp
     pages/global/ProxyPage.h
     pages/global/PasteEEPage.cpp
@@ -810,7 +810,7 @@ SET(MULTIMC_SOURCES
     )
 
 ######## UIs ########
-SET(MULTIMC_UIS
+SET(GENERICMC_UIS
     # Instance pages
     pages/instance/GameOptionsPage.ui
     pages/instance/VersionPage.ui
@@ -829,7 +829,7 @@ SET(MULTIMC_UIS
     pages/global/ExternalToolsPage.ui
     pages/global/JavaPage.ui
     pages/global/MinecraftPage.ui
-    pages/global/MultiMCPage.ui
+    pages/global/GenericMCPage.ui
     pages/global/ProxyPage.ui
     pages/global/PasteEEPage.ui
 
@@ -866,9 +866,9 @@ SET(MULTIMC_UIS
     widgets/MCModInfoFrame.ui
 )
 
-set(MULTIMC_QRCS
+set(GENERICMC_QRCS
     resources/backgrounds/backgrounds.qrc
-    resources/multimc/multimc.qrc
+    resources/genericmc/genericmc.qrc
     resources/pe_dark/pe_dark.qrc
     resources/pe_light/pe_light.qrc
     resources/pe_colored/pe_colored.qrc
@@ -881,19 +881,19 @@ set(MULTIMC_QRCS
 
 ######## Windows resource files ########
 if(WIN32)
-    set(MULTIMC_RCS resources/multimc.rc)
+    set(GENERICMC_RCS resources/genericmc.rc)
 endif()
 
 # Qt 5 stuff
-qt5_wrap_ui(MULTIMC_UI ${MULTIMC_UIS})
-qt5_add_resources(MULTIMC_RESOURCES ${MULTIMC_QRCS})
+qt5_wrap_ui(GENERICMC_UI ${GENERICMC_UIS})
+qt5_add_resources(GENERICMC_RESOURCES ${GENERICMC_QRCS})
 
 # Add executable
-add_library(MultiMC_logic STATIC ${LOGIC_SOURCES} ${MULTIMC_SOURCES} ${MULTIMC_UI} ${MULTIMC_RESOURCES})
-target_link_libraries(MultiMC_logic
+add_library(GENERICMC_logic STATIC ${LOGIC_SOURCES} ${GENERICMC_SOURCES} ${GENERICMC_UI} ${GENERICMC_RESOURCES})
+target_link_libraries(GENERICMC_logic
     systeminfo
-    MultiMC_quazip
-    MultiMC_classparser
+    GENERICMC_quazip
+    GENERICMC_classparser
     ${NBT_NAME}
     ${ZLIB_LIBRARIES}
     optional-bare
@@ -901,45 +901,45 @@ target_link_libraries(MultiMC_logic
     BuildConfig
     Katabasis
 )
-target_link_libraries(MultiMC_logic
+target_link_libraries(GENERICMC_logic
     Qt5::Core
     Qt5::Xml
     Qt5::Network
     Qt5::Concurrent
     Qt5::Gui
 )
-target_link_libraries(MultiMC_logic
-    MultiMC_iconfix
+target_link_libraries(GENERICMC_logic
+	GENERICMC_iconfix
     ${QUAZIP_LIBRARIES}
     hoedown
-    MultiMC_rainbow
+    GENERICMC_rainbow
     LocalPeer
 )
 
-add_executable(MultiMC MACOSX_BUNDLE WIN32 main.cpp ${MULTIMC_RCS})
-target_link_libraries(MultiMC MultiMC_logic)
+add_executable(GENERICMC MACOSX_BUNDLE WIN32 main.cpp ${GENERICMC_RCS})
+target_link_libraries(GENERICMC GENERICMC_logic)
 
-if(DEFINED MultiMC_APP_BINARY_NAME)
-    set_target_properties(MultiMC PROPERTIES OUTPUT_NAME "${MultiMC_APP_BINARY_NAME}")
+if(DEFINED GENERICMC_APP_BINARY_NAME)
+	set_target_properties(GENERICMC PROPERTIES OUTPUT_NAME "${GENERICMC_APP_BINARY_NAME}")
 endif()
-if(DEFINED MultiMC_BINARY_RPATH)
-    SET_TARGET_PROPERTIES(MultiMC PROPERTIES INSTALL_RPATH "${MultiMC_BINARY_RPATH}")
-endif()
-
-if(DEFINED MultiMC_APP_BINARY_DEFS)
-    target_compile_definitions(MultiMC PRIVATE ${MultiMC_APP_BINARY_DEFS})
-    target_compile_definitions(MultiMC_logic PRIVATE ${MultiMC_APP_BINARY_DEFS})
+if(DEFINED GENERICMC_BINARY_RPATH)
+	SET_TARGET_PROPERTIES(GENERICMC PROPERTIES INSTALL_RPATH "${GENERICMC_BINARY_RPATH}")
 endif()
 
-install(TARGETS MultiMC
+if(DEFINED GENERICMC_APP_BINARY_DEFS)
+	target_compile_definitions(GENERICMC PRIVATE ${GENERICMC_APP_BINARY_DEFS})
+        target_compile_definitions(GENERICMC_logic PRIVATE ${GENERICMC_APP_BINARY_DEFS})
+endif()
+
+install(TARGETS GENERICMC
     BUNDLE DESTINATION ${BUNDLE_DEST_DIR} COMPONENT Runtime
     LIBRARY DESTINATION ${LIBRARY_DEST_DIR} COMPONENT Runtime
     RUNTIME DESTINATION ${BINARY_DEST_DIR} COMPONENT Runtime
 )
 
-target_link_libraries(MultiMC_logic secrets)
+target_link_libraries(GENERICMC_logic secrets)
 
-#### The MultiMC bundle mess! ####
+#### The GENERICMC bundle mess! ####
 # Bundle utilities are used to complete the portable packages - they add all the libraries that would otherwise be missing on the target system.
 # NOTE: it seems that this absolutely has to be here, and nowhere else.
 if(INSTALL_BUNDLE STREQUAL "full")

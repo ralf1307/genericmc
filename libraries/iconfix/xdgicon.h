@@ -31,9 +31,9 @@
 #include <QString>
 #include <QStringList>
 
-#include "multimc_iconfix_export.h"
+#include "genericmc_iconfix_export.h"
 
-class MULTIMC_ICONFIX_EXPORT XdgIcon
+class GENERICMC_ICONFIX_EXPORT XdgIcon
 {
 public:
     static QIcon fromTheme(const QString &iconName, const QIcon &fallback = QIcon());

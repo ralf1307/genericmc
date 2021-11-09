@@ -42,9 +42,9 @@ public:
     {
         return m_file;
     }
-    QString mmc_id() const
+    QString gmc_id() const
     {
-        return m_mmc_id;
+        return m_gmc_id;
     }
     ModType type() const
     {
@@ -104,7 +104,7 @@ public:
 protected:
     QFileInfo m_file;
     QDateTime m_changedDateTime;
-    QString m_mmc_id;
+    QString m_gmc_id;
     QString m_name;
     bool m_enabled = true;
     bool m_resolving = false;

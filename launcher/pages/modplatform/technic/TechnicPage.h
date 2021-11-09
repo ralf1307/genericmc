@@ -18,7 +18,7 @@
 #include <QWidget>
 
 #include "pages/BasePage.h"
-#include <MultiMC.h>
+#include <GenericMC.h>
 #include "tasks/Task.h"
 #include "TechnicData.h"
 
@@ -46,7 +46,7 @@ public:
     }
     virtual QIcon icon() const override
     {
-        return MMC->getThemedIcon("technic");
+        return GMC->getThemedIcon("technic");
     }
     virtual QString id() const override
     {

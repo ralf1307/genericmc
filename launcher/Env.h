@@ -25,7 +25,7 @@ class Index;
 
 class Env
 {
-    friend class MultiMC;
+    friend class GenericMC;
 private:
     struct Private;
     Env();

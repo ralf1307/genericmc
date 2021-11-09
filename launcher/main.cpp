@@ -1,4 +1,4 @@
-#include "MultiMC.h"
+#include "GenericMC.h"
 #include "MainWindow.h"
 #include "LaunchController.h"
 #include <InstanceList.h>
@@ -34,14 +34,14 @@ int main(int argc, char *argv[])
 #endif
 
     // initialize Qt
-    MultiMC app(argc, argv);
+    GenericMC app(argc, argv);
 
     switch (app.status())
     {
-    case MultiMC::StartingUp:
-    case MultiMC::Initialized:
+    case GenericMC::StartingUp:
+    case GenericMC::Initialized:
     {
-        Q_INIT_RESOURCE(multimc);
+        Q_INIT_RESOURCE(genericmc);
         Q_INIT_RESOURCE(backgrounds);
 
         Q_INIT_RESOURCE(pe_dark);
@@ -53,9 +53,9 @@ int main(int argc, char *argv[])
         Q_INIT_RESOURCE(flat);
         return app.exec();
     }
-    case MultiMC::Failed:
+    case GenericMC::Failed:
         return 1;
-    case MultiMC::Succeeded:
+    case GenericMC::Succeeded:
         return 0;
     }
 }

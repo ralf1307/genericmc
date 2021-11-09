@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#include "MultiMCPage.h"
-#include "ui_MultiMCPage.h"
+#include "GenericMCPage.h"
+#include "ui_GenericMCPage.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -25,7 +25,7 @@
 
 #include "settings/SettingsObject.h"
 #include <FileSystem.h>
-#include "MultiMC.h"
+#include "GenericMC.h"
 #include "BuildConfig.h"
 #include "themes/ITheme.h"
 
@@ -41,7 +41,7 @@ enum InstSortMode
     Sort_LastLaunch
 };
 
-MultiMCPage::MultiMCPage(QWidget *parent) : QWidget(parent), ui(new Ui::MultiMCPage)
+GenericMCPage::GenericMCPage(QWidget *parent) : QWidget(parent), ui(new Ui::GenericMCPage)
 {
     ui->setupUi(this);
     auto origForeground = ui->fontPreview->palette().color(ui->fontPreview->foregroundRole());
@@ -53,31 +53,27 @@ MultiMCPage::MultiMCPage(QWidget *parent) : QWidget(parent), ui(new Ui::MultiMCP
 
     defaultFormat = new QTextCharFormat(ui->fontPreview->currentCharFormat());
 
-    m_languageModel = MMC->translations();
+    m_languageModel = GMC->translations();
     loadSettings();
 
     if(BuildConfig.UPDATER_ENABLED)
     {
-        QObject::connect(MMC->updateChecker().get(), &UpdateChecker::channelListLoaded, this, &MultiMCPage::refreshUpdateChannelList);
+        QObject::connect(GMC->updateChecker().get(), &UpdateChecker::channelListLoaded, this, &GenericMCPage::refreshUpdateChannelList);
 
-        if (MMC->updateChecker()->hasChannels())
+        if (GMC->updateChecker()->hasChannels())
         {
             refreshUpdateChannelList();
         }
         else
         {
-            MMC->updateChecker()->updateChanList(false);
+            GMC->updateChecker()->updateChanList(false);
         }
     }
     else
     {
         ui->updateSettingsBox->setHidden(true);
     }
-    // Analytics
-    if(BuildConfig.ANALYTICS_ID.isEmpty())
-    {
-        ui->tabWidget->removeTab(ui->tabWidget->indexOf(ui->analyticsTab));
-    }
+
     connect(ui->fontSizeBox, SIGNAL(valueChanged(int)), SLOT(refreshFontPreview()));
     connect(ui->consoleFont, SIGNAL(currentFontChanged(QFont)), SLOT(refreshFontPreview()));
 
@@ -89,19 +85,19 @@ MultiMCPage::MultiMCPage(QWidget *parent) : QWidget(parent), ui(new Ui::MultiMCP
     }
 }
 
-MultiMCPage::~MultiMCPage()
+GenericMCPage::~GenericMCPage()
 {
     delete ui;
     delete defaultFormat;
 }
 
-bool MultiMCPage::apply()
+bool GenericMCPage::apply()
 {
     applySettings();
     return true;
 }
 
-void MultiMCPage::on_instDirBrowseBtn_clicked()
+void GenericMCPage::on_instDirBrowseBtn_clicked()
 {
     QString raw_dir = QFileDialog::getExistingDirectory(this, tr("Instance Folder"), ui->instDirTextBox->text());
 
@@ -133,7 +129,7 @@ void MultiMCPage::on_instDirBrowseBtn_clicked()
     }
 }
 
-void MultiMCPage::on_iconsDirBrowseBtn_clicked()
+void GenericMCPage::on_iconsDirBrowseBtn_clicked()
 {
     QString raw_dir = QFileDialog::getExistingDirectory(this, tr("Icons Folder"), ui->iconsDirTextBox->text());
 
@@ -144,7 +140,7 @@ void MultiMCPage::on_iconsDirBrowseBtn_clicked()
         ui->iconsDirTextBox->setText(cooked_dir);
     }
 }
-void MultiMCPage::on_modsDirBrowseBtn_clicked()
+void GenericMCPage::on_modsDirBrowseBtn_clicked()
 {
     QString raw_dir = QFileDialog::getExistingDirectory(this, tr("Mods Folder"), ui->modsDirTextBox->text());
 
@@ -155,7 +151,7 @@ void MultiMCPage::on_modsDirBrowseBtn_clicked()
         ui->modsDirTextBox->setText(cooked_dir);
     }
 }
-void MultiMCPage::on_migrateDataFolderMacBtn_clicked()
+void GenericMCPage::on_migrateDataFolderMacBtn_clicked()
 {
     QFile file(QDir::current().absolutePath() + "/dontmovemacdata");
     file.remove();
@@ -163,7 +159,7 @@ void MultiMCPage::on_migrateDataFolderMacBtn_clicked()
     qApp->quit();
 }
 
-void MultiMCPage::refreshUpdateChannelList()
+void GenericMCPage::refreshUpdateChannelList()
 {
     // Stop listening for selection changes. It's going to change a lot while we update it and
     // we don't need to update the
@@ -171,7 +167,7 @@ void MultiMCPage::refreshUpdateChannelList()
     QObject::disconnect(ui->updateChannelComboBox, SIGNAL(currentIndexChanged(int)), this,
                         SLOT(updateChannelSelectionChanged(int)));
 
-    QList<UpdateChecker::ChannelListEntry> channelList = MMC->updateChecker()->getChannelList();
+    QList<UpdateChecker::ChannelListEntry> channelList = GMC->updateChecker()->getChannelList();
     ui->updateChannelComboBox->clear();
     int selection = -1;
     for (int i = 0; i < channelList.count(); i++)
@@ -208,15 +204,15 @@ void MultiMCPage::refreshUpdateChannelList()
     ui->updateChannelComboBox->setEnabled(true);
 }
 
-void MultiMCPage::updateChannelSelectionChanged(int index)
+void GenericMCPage::updateChannelSelectionChanged(int index)
 {
     refreshUpdateChannelDesc();
 }
 
-void MultiMCPage::refreshUpdateChannelDesc()
+void GenericMCPage::refreshUpdateChannelDesc()
 {
     // Get the channel list.
-    QList<UpdateChecker::ChannelListEntry> channelList = MMC->updateChecker()->getChannelList();
+    QList<UpdateChecker::ChannelListEntry> channelList = GMC->updateChecker()->getChannelList();
     int selectedIndex = ui->updateChannelComboBox->currentIndex();
     if (selectedIndex < 0)
     {
@@ -235,9 +231,9 @@ void MultiMCPage::refreshUpdateChannelDesc()
     }
 }
 
-void MultiMCPage::applySettings()
+void GenericMCPage::applySettings()
 {
-    auto s = MMC->settings();
+    auto s = GMC->settings();
 
     if (ui->resetNotificationsBtn->isChecked())
     {
@@ -283,7 +279,7 @@ void MultiMCPage::applySettings()
 
     if(original != s->get("IconTheme"))
     {
-        MMC->setIconTheme(s->get("IconTheme").toString());
+        GMC->setIconTheme(s->get("IconTheme").toString());
     }
 
     auto originalAppTheme = s->get("ApplicationTheme").toString();
@@ -291,7 +287,7 @@ void MultiMCPage::applySettings()
     if(originalAppTheme != newAppTheme)
     {
         s->set("ApplicationTheme", newAppTheme);
-        MMC->setApplicationTheme(newAppTheme, false);
+        GMC->setApplicationTheme(newAppTheme, false);
     }
 
     // Console settings
@@ -322,15 +318,10 @@ void MultiMCPage::applySettings()
         break;
     }
 
-    // Analytics
-    if(!BuildConfig.ANALYTICS_ID.isEmpty())
-    {
-        s->set("Analytics", ui->analyticsCheck->isChecked());
-    }
 }
-void MultiMCPage::loadSettings()
+void GenericMCPage::loadSettings()
 {
-    auto s = MMC->settings();
+    auto s = GMC->settings();
     // Updates
     ui->autoUpdateCheckBox->setChecked(s->get("AutoUpdate").toBool());
     m_currentUpdateChannel = s->get("UpdateChannel").toString();
@@ -375,7 +366,7 @@ void MultiMCPage::loadSettings()
 
     {
         auto currentTheme = s->get("ApplicationTheme").toString();
-        auto themes = MMC->getValidApplicationThemes();
+        auto themes = GMC->getValidApplicationThemes();
         int idx = 0;
         for(auto &theme: themes)
         {
@@ -392,12 +383,12 @@ void MultiMCPage::loadSettings()
     ui->showConsoleCheck->setChecked(s->get("ShowConsole").toBool());
     ui->autoCloseConsoleCheck->setChecked(s->get("AutoCloseConsole").toBool());
     ui->showConsoleErrorCheck->setChecked(s->get("ShowConsoleOnError").toBool());
-    QString fontFamily = MMC->settings()->get("ConsoleFont").toString();
+    QString fontFamily = GMC->settings()->get("ConsoleFont").toString();
     QFont consoleFont(fontFamily);
     ui->consoleFont->setCurrentFont(consoleFont);
 
     bool conversionOk = true;
-    int fontSize = MMC->settings()->get("ConsoleFontSize").toInt(&conversionOk);
+    int fontSize = GMC->settings()->get("ConsoleFontSize").toInt(&conversionOk);
     if(!conversionOk)
     {
         fontSize = 11;
@@ -423,14 +414,9 @@ void MultiMCPage::loadSettings()
         ui->sortByNameBtn->setChecked(true);
     }
 
-    // Analytics
-    if(!BuildConfig.ANALYTICS_ID.isEmpty())
-    {
-        ui->analyticsCheck->setChecked(s->get("Analytics").toBool());
-    }
 }
 
-void MultiMCPage::refreshFontPreview()
+void GenericMCPage::refreshFontPreview()
 {
     int fontSize = ui->fontSizeBox->value();
     QString fontFamily = ui->consoleFont->currentFont().family();

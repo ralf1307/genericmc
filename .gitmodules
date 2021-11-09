@@ -3,4 +3,4 @@
     url = https://github.com/MultiMC/libnbtplusplus.git
 [submodule "libraries/quazip"]
     path = libraries/quazip
-    url = https://github.com/MultiMC/quazip.git
+    url = https://github.com/ralf1307/quazip.git

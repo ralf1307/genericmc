@@ -18,7 +18,7 @@
 #include <QWidget>
 
 #include "pages/BasePage.h"
-#include <MultiMC.h>
+#include <GenericMC.h>
 
 namespace Ui {
 class ExternalToolsPage;
@@ -38,10 +38,10 @@ public:
     }
     QIcon icon() const override
     {
-        auto icon = MMC->getThemedIcon("externaltools");
+        auto icon = GMC->getThemedIcon("externaltools");
         if(icon.isNull())
         {
-            icon = MMC->getThemedIcon("loadermods");
+            icon = GMC->getThemedIcon("loadermods");
         }
         return icon;
     }

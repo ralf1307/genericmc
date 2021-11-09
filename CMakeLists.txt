@@ -2,14 +2,14 @@ cmake_minimum_required(VERSION 3.1)
 
 string(COMPARE EQUAL "${CMAKE_SOURCE_DIR}" "${CMAKE_BUILD_DIR}" IS_IN_SOURCE_BUILD)
 if(IS_IN_SOURCE_BUILD)
-    message(FATAL_ERROR "You are building MultiMC in-source. Please separate the build tree from the source tree.")
+    message(FATAL_ERROR "You are building GenericMC in-source. Please separate the build tree from the source tree.")
 endif()
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     if(CMAKE_HOST_SYSTEM_VERSION MATCHES ".*[Mm]icrosoft.*" OR
         CMAKE_HOST_SYSTEM_VERSION MATCHES ".*WSL.*"
     )
-        message(FATAL_ERROR "Building MultiMC is not supported in Linux-on-Windows distributions.")
+        message(FATAL_ERROR "Building GenericMC is not supported in Linux-on-Windows distributions.")
     endif()
 endif()
 
@@ -18,7 +18,7 @@ if(WIN32)
     cmake_policy(SET CMP0020 OLD)
 endif()
 
-project(MultiMC)
+project(genericmc)
 enable_testing()
 
 
@@ -49,53 +49,34 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Werror=return-type")
 
 ##################################### Set Application options #####################################
 
-######## Set URLs ########
-set(MultiMC_NEWS_RSS_URL "https://multimc.org/rss.xml" CACHE STRING "URL to fetch MultiMC's news RSS feed from.")
-
 ######## Set version numbers ########
-set(MultiMC_VERSION_MAJOR    0)
-set(MultiMC_VERSION_MINOR    6)
-set(MultiMC_VERSION_HOTFIX   13)
+set(GENERICMC_VERSION_MAJOR    0)
+set(GENERICMC_VERSION_MINOR    6)
+set(GENERICMC_VERSION_HOTFIX   13)
 
 # Build number
-set(MultiMC_VERSION_BUILD -1 CACHE STRING "Build number. -1 for no build number.")
+set(GENERICMC_VERSION_BUILD -1 CACHE STRING "Build number. -1 for no build number.")
 
 # Build platform.
-set(MultiMC_BUILD_PLATFORM "" CACHE STRING "A short string identifying the platform that this build was built for. Only used by the notification system and to display in the about dialog.")
-
-# Channel list URL
-set(MultiMC_UPDATER_BASE "" CACHE STRING "Base URL for the updater.")
-
-# Notification URL
-set(MultiMC_NOTIFICATION_URL "" CACHE STRING "URL for checking for notifications.")
+set(GENERICMC_BUILD_PLATFORM "" CACHE STRING "A short string identifying the platform that this build was built for. Only used by the notification system and to display in the about dialog.")
 
 # The metadata server
-set(MultiMC_META_URL "https://meta.multimc.org/v1/" CACHE STRING "URL to fetch MultiMC's meta files from.")
+set(GENERICMC_META_URL "https://meta.multimc.org/v1/" CACHE STRING "URL to fetch GenericMC's meta files from.")
 
-# Bug tracker URL
-set(MultiMC_BUG_TRACKER_URL "" CACHE STRING "URL for the bug tracker.")
-
-# Discord URL
-set(MultiMC_DISCORD_URL "" CACHE STRING "URL for the Discord guild.")
-
-# Subreddit URL
-set(MultiMC_SUBREDDIT_URL "" CACHE STRING "URL for the subreddit.")
-
-
-option(MultiMC_EMBED_SECRETS "Determines whether to embed secrets. Secrets are separate and non-public." OFF)
+option(GENERICMC_EMBED_SECRETS "Determines whether to embed secrets. Secrets are separate and non-public." OFF)
 
 #### Check the current Git commit and branch
 include(GetGitRevisionDescription)
-get_git_head_revision(MultiMC_GIT_REFSPEC MultiMC_GIT_COMMIT)
+get_git_head_revision(GENERICMC_GIT_REFSPEC GENERICMC_GIT_COMMIT)
 
-message(STATUS "Git commit: ${MultiMC_GIT_COMMIT}")
-message(STATUS "Git refspec: ${MultiMC_GIT_REFSPEC}")
+message(STATUS "Git commit: ${GENERICMC_GIT_COMMIT}")
+message(STATUS "Git refspec: ${GENERICMC_GIT_REFSPEC}")
 
-set(MultiMC_RELEASE_VERSION_NAME "${MultiMC_VERSION_MAJOR}.${MultiMC_VERSION_MINOR}.${MultiMC_VERSION_HOTFIX}")
+set(GENERICMC_RELEASE_VERSION_NAME "${GENERICMC_VERSION_MAJOR}.${GENERICMC_VERSION_MINOR}.${GENERICMC_VERSION_HOTFIX}")
 
 #### Custom target to just print the version.
-add_custom_target(version echo "Version: ${MultiMC_RELEASE_VERSION_NAME}")
-add_custom_target(tcversion echo "\\#\\#teamcity[setParameter name=\\'env.MULTIMC_VERSION\\' value=\\'${MultiMC_RELEASE_VERSION_NAME}\\']")
+add_custom_target(version echo "Version: ${GENERICMC_RELEASE_VERSION_NAME}")
+add_custom_target(tcversion echo "\\#\\#teamcity[setParameter name=\\'env.GENERICMC_VERSION\\' value=\\'${GENERICMC_RELEASE_VERSION_NAME}\\']")
 
 ################################ 3rd Party Libs ################################
 
@@ -123,44 +104,44 @@ endif()
 ####################################### Install layout #######################################
 
 # How to install the build results
-set(MultiMC_LAYOUT "auto" CACHE STRING "The layout for MultiMC installation (auto, win-bundle, lin-bundle, lin-nodeps, lin-system, mac-bundle)")
-set_property(CACHE MultiMC_LAYOUT PROPERTY STRINGS auto win-bundle lin-bundle lin-nodeps lin-system mac-bundle)
+set(GENERICMC_LAYOUT "auto" CACHE STRING "The layout for GenericMC installation (auto, win-bundle, lin-bundle, lin-nodeps, lin-system, mac-bundle)")
+set_property(CACHE GENERICMC_LAYOUT PROPERTY STRINGS auto win-bundle lin-bundle lin-nodeps lin-system mac-bundle)
 
-if(MultiMC_LAYOUT STREQUAL "auto")
+if(GENERICMC_LAYOUT STREQUAL "auto")
     if(UNIX AND APPLE)
-        set(MultiMC_LAYOUT_REAL "mac-bundle")
+        set(GENERICMC_LAYOUT_REAL "mac-bundle")
     elseif(UNIX)
-        set(MultiMC_LAYOUT_REAL "lin-nodeps")
+        set(GENERICMC_LAYOUT_REAL "lin-system")
     elseif(WIN32)
-        set(MultiMC_LAYOUT_REAL "win-bundle")
+        set(GENERICMC_LAYOUT_REAL "win-bundle")
     else()
         message(FATAL_ERROR "Cannot choose a sensible install layout for your platform.")
     endif()
 else()
-    set(MultiMC_LAYOUT_REAL ${MultiMC_LAYOUT})
+    set(GENERICMC_LAYOUT_REAL ${GenericMC_LAYOUT})
 endif()
 
-if(MultiMC_LAYOUT_REAL STREQUAL "mac-bundle")
-    set(BINARY_DEST_DIR "MultiMC.app/Contents/MacOS")
-    set(LIBRARY_DEST_DIR "MultiMC.app/Contents/MacOS")
-    set(PLUGIN_DEST_DIR "MultiMC.app/Contents/MacOS")
-    set(RESOURCES_DEST_DIR "MultiMC.app/Contents/Resources")
-    set(JARS_DEST_DIR "MultiMC.app/Contents/MacOS/jars")
+if(GENERICMC_LAYOUT_REAL STREQUAL "mac-bundle")
+    set(BINARY_DEST_DIR "genericmc.app/Contents/MacOS")
+    set(LIBRARY_DEST_DIR "genericmc.app/Contents/MacOS")
+    set(PLUGIN_DEST_DIR "genericmc.app/Contents/MacOS")
+    set(RESOURCES_DEST_DIR "genericmc.app/Contents/Resources")
+    set(JARS_DEST_DIR "genericmc.app/Contents/MacOS/jars")
 
     set(BUNDLE_DEST_DIR ".")
 
     # Apps to bundle
-    set(APPS "\${CMAKE_INSTALL_PREFIX}/MultiMC.app")
+    set(APPS "\${CMAKE_INSTALL_PREFIX}/genericmc.app")
 
     # Mac bundle settings
-    set(MACOSX_BUNDLE_BUNDLE_NAME "MultiMC")
-    set(MACOSX_BUNDLE_INFO_STRING "MultiMC Minecraft launcher and management utility.")
-    set(MACOSX_BUNDLE_GUI_IDENTIFIER "org.multimc.MultiMC5")
-    set(MACOSX_BUNDLE_BUNDLE_VERSION "${MultiMC_VERSION_MAJOR}.${MultiMC_VERSION_MINOR}.${MultiMC_VERSION_HOTFIX}.${MultiMC_VERSION_BUILD}")
-    set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${MultiMC_VERSION_MAJOR}.${MultiMC_VERSION_MINOR}.${MultiMC_VERSION_HOTFIX}.${MultiMC_VERSION_BUILD}")
-    set(MACOSX_BUNDLE_LONG_VERSION_STRING "${MultiMC_VERSION_MAJOR}.${MultiMC_VERSION_MINOR}.${MultiMC_VERSION_HOTFIX}.${MultiMC_VERSION_BUILD}")
-    set(MACOSX_BUNDLE_ICON_FILE MultiMC.icns)
-    set(MACOSX_BUNDLE_COPYRIGHT "Copyright 2015-2021 MultiMC Contributors")
+    set(MACOSX_BUNDLE_BUNDLE_NAME "GenericMC")
+    set(MACOSX_BUNDLE_INFO_STRING "Minecraft launcher and management utility.")
+    set(MACOSX_BUNDLE_GUI_IDENTIFIER "de.ralfrachinger.genericmc")
+    set(MACOSX_BUNDLE_BUNDLE_VERSION "${GENERICMC_VERSION_MAJOR}.${GENERICMC_VERSION_MINOR}.${GENERICMC_VERSION_HOTFIX}.${GENERICMC_VERSION_BUILD}")
+    set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${GENERICMC_VERSION_MAJOR}.${GENERICMC_VERSION_MINOR}.${GENERICMC_VERSION_HOTFIX}.${GENERICMC_VERSION_BUILD}")
+    set(MACOSX_BUNDLE_LONG_VERSION_STRING "${GENERICMC_VERSION_MAJOR}.${GENERICMC_VERSION_MINOR}.${GENERICMC_VERSION_HOTFIX}.${GENERICMC_VERSION_BUILD}")
+    set(MACOSX_BUNDLE_ICON_FILE GenericMC.icns)
+    set(MACOSX_BUNDLE_COPYRIGHT "Copyright 2021 Ralf Rachinger & Copyright 2021 GenericMC Contributors & Copyright 2015-2021 MultiMC Contributors")
 
     # directories to look for dependencies
     set(DIRS ${QT_LIBS_DIR} ${QT_LIBEXECS_DIR} ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
@@ -169,9 +150,9 @@ if(MultiMC_LAYOUT_REAL STREQUAL "mac-bundle")
     set(INSTALL_BUNDLE "full")
 
     # Add the icon
-    install(FILES launcher/resources/MultiMC.icns DESTINATION ${RESOURCES_DEST_DIR})
+    install(FILES launcher/resources/GenericMC.icns DESTINATION ${RESOURCES_DEST_DIR})
 
-elseif(MultiMC_LAYOUT_REAL STREQUAL "lin-bundle")
+elseif(GENERICMC_LAYOUT_REAL STREQUAL "lin-bundle")
     set(BINARY_DEST_DIR "bin")
     set(LIBRARY_DEST_DIR "bin")
     set(PLUGIN_DEST_DIR "plugins")
@@ -180,7 +161,7 @@ elseif(MultiMC_LAYOUT_REAL STREQUAL "lin-bundle")
     set(JARS_DEST_DIR "bin/jars")
 
     # Apps to bundle
-    set(APPS "\${CMAKE_INSTALL_PREFIX}/bin/MultiMC")
+    set(APPS "\${CMAKE_INSTALL_PREFIX}/bin/genericmc")
 
     # directories to look for dependencies
     set(DIRS ${QT_LIBS_DIR} ${QT_LIBEXECS_DIR} ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
@@ -189,12 +170,12 @@ elseif(MultiMC_LAYOUT_REAL STREQUAL "lin-bundle")
     set(INSTALL_BUNDLE "full")
 
     # Set RPATH
-    SET(MultiMC_BINARY_RPATH "$ORIGIN/")
+    SET(GENERICMC_BINARY_RPATH "$ORIGIN/")
 
     # Install basic runner script
-    install(PROGRAMS launcher/package/linux/MultiMC DESTINATION ${BUNDLE_DEST_DIR})
+    install(PROGRAMS launcher/package/linux/genericmc DESTINATION ${BUNDLE_DEST_DIR})
 
-elseif(MultiMC_LAYOUT_REAL STREQUAL "lin-nodeps")
+elseif(GENERICMC_LAYOUT_REAL STREQUAL "lin-nodeps")
     set(BINARY_DEST_DIR "bin")
     set(LIBRARY_DEST_DIR "bin")
     set(PLUGIN_DEST_DIR "plugins")
@@ -206,28 +187,28 @@ elseif(MultiMC_LAYOUT_REAL STREQUAL "lin-nodeps")
     set(INSTALL_BUNDLE "nodeps")
 
     # Set RPATH
-    SET(MultiMC_BINARY_RPATH "$ORIGIN/")
+    SET(GENERICMC_BINARY_RPATH "$ORIGIN/")
 
     # Install basic runner script
-    install(PROGRAMS launcher/package/linux/MultiMC DESTINATION ${BUNDLE_DEST_DIR})
+    install(PROGRAMS launcher/package/linux/genericmc DESTINATION ${BUNDLE_DEST_DIR})
 
-elseif(MultiMC_LAYOUT_REAL STREQUAL "lin-system")
-    set(MultiMC_APP_BINARY_NAME "multimc" CACHE STRING "Name of the MultiMC binary")
-    set(MultiMC_BINARY_DEST_DIR "bin" CACHE STRING "Path to the binary directory")
-    set(MultiMC_LIBRARY_DEST_DIR "lib${LIB_SUFFIX}" CACHE STRING "Path to the library directory")
-    set(MultiMC_SHARE_DEST_DIR "share/multimc" CACHE STRING "Path to the shared data directory")
-    set(JARS_DEST_DIR "${MultiMC_SHARE_DEST_DIR}/jars")
+elseif(GENERICMC_LAYOUT_REAL STREQUAL "lin-system")
+    set(GENERICMC_APP_BINARY_NAME "genericmc" CACHE STRING "Name of the genericmc binary")
+    set(GENERICMC_BINARY_DEST_DIR "bin" CACHE STRING "Path to the binary directory")
+    set(GENERICMC_LIBRARY_DEST_DIR "lib${LIB_SUFFIX}" CACHE STRING "Path to the library directory")
+    set(GENERICMC_SHARE_DEST_DIR "share/genericmc" CACHE STRING "Path to the shared data directory")
+    set(JARS_DEST_DIR "${GENERICMC_SHARE_DEST_DIR}/jars")
 
-    set(BINARY_DEST_DIR ${MultiMC_BINARY_DEST_DIR})
-    set(LIBRARY_DEST_DIR ${MultiMC_LIBRARY_DEST_DIR})
+    set(BINARY_DEST_DIR ${GENERICMC_BINARY_DEST_DIR})
+    set(LIBRARY_DEST_DIR ${GENERICMC_LIBRARY_DEST_DIR})
 
-    MESSAGE(STATUS "Compiling for linux system with ${MultiMC_SHARE_DEST_DIR} and MULTIMC_LINUX_DATADIR")
-    SET(MultiMC_APP_BINARY_DEFS "-DMULTIMC_JARS_LOCATION=${CMAKE_INSTALL_PREFIX}/${JARS_DEST_DIR}" "-DMULTIMC_LINUX_DATADIR")
+    MESSAGE(STATUS "Compiling for linux system with ${GENERICMC_SHARE_DEST_DIR} and GENERICMC_LINUX_DATADIR")
+    SET(GENERICMC_APP_BINARY_DEFS "-DGENERICMC_JARS_LOCATION=/usr/${JARS_DEST_DIR}" "-DGENERICMC_LINUX_DATADIR")
 
     # install as bundle with no dependencies included
     set(INSTALL_BUNDLE "nodeps")
 
-elseif(MultiMC_LAYOUT_REAL STREQUAL "win-bundle")
+elseif(GENERICMC_LAYOUT_REAL STREQUAL "win-bundle")
     set(BINARY_DEST_DIR ".")
     set(LIBRARY_DEST_DIR ".")
     set(PLUGIN_DEST_DIR ".")
@@ -236,7 +217,7 @@ elseif(MultiMC_LAYOUT_REAL STREQUAL "win-bundle")
     set(JARS_DEST_DIR "jars")
 
     # Apps to bundle
-    set(APPS "\${CMAKE_INSTALL_PREFIX}/MultiMC.exe")
+    set(APPS "\${CMAKE_INSTALL_PREFIX}/genericmc.exe")
 
     # directories to look for dependencies
     set(DIRS ${QT_LIBS_DIR} ${QT_LIBEXECS_DIR} ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
@@ -255,7 +236,7 @@ set_directory_properties(PROPERTIES EP_BASE External)
 option(NBT_BUILD_SHARED "Build NBT shared library" ON)
 option(NBT_USE_ZLIB "Build NBT library with zlib support" OFF)
 option(NBT_BUILD_TESTS "Build NBT library tests" OFF) #FIXME: fix unit tests.
-set(NBT_NAME MultiMC_nbt++)
+set(NBT_NAME GenericMC_nbt++)
 set(NBT_DEST_DIR ${LIBRARY_DEST_DIR})
 add_subdirectory(libraries/libnbtplusplus)
 
@@ -277,7 +258,7 @@ add_subdirectory(libraries/katabasis) # An OAuth2 library that tried to do too m
 
 add_subdirectory(buildconfig)
 
-if(MultiMC_EMBED_SECRETS)
+if(GENERICMC_EMBED_SECRETS)
     add_subdirectory(secrets)
 else()
     add_subdirectory(notsecrets)

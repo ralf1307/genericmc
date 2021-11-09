@@ -289,7 +289,7 @@ bool IconList::iconFileExists(const QString &key) const
     return iconEntry->has(IconType::FileBased);
 }
 
-const MMCIcon *IconList::icon(const QString &key) const
+const GMCIcon *IconList::icon(const QString &key) const
 {
     int iconIdx = getIconIndex(key);
     if (iconIdx == -1)
@@ -325,11 +325,11 @@ bool IconList::addThemeIcon(const QString& key)
         // add a new icon
         beginInsertRows(QModelIndex(), icons.size(), icons.size());
         {
-            MMCIcon mmc_icon;
-            mmc_icon.m_name = key;
-            mmc_icon.m_key = key;
-            mmc_icon.replace(Builtin, key);
-            icons.push_back(mmc_icon);
+            GMCIcon gmc_icon;
+            gmc_icon.m_name = key;
+            gmc_icon.m_key = key;
+            gmc_icon.replace(Builtin, key);
+            icons.push_back(gmc_icon);
             name_index[key] = icons.size() - 1;
         }
         endInsertRows();
@@ -356,11 +356,11 @@ bool IconList::addIcon(const QString &key, const QString &name, const QString &p
         // add a new icon
         beginInsertRows(QModelIndex(), icons.size(), icons.size());
         {
-            MMCIcon mmc_icon;
-            mmc_icon.m_name = name;
-            mmc_icon.m_key = key;
-            mmc_icon.replace(type, icon, path);
-            icons.push_back(mmc_icon);
+            GMCIcon gmc_icon;
+            gmc_icon.m_name = name;
+            gmc_icon.m_key = key;
+            gmc_icon.replace(type, icon, path);
+            icons.push_back(gmc_icon);
             name_index[key] = icons.size() - 1;
         }
         endInsertRows();

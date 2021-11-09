@@ -18,7 +18,7 @@
 #include <QWidget>
 
 #include "pages/BasePage.h"
-#include <MultiMC.h>
+#include <GenericMC.h>
 #include "tasks/Task.h"
 #include <modplatform/flame/FlamePackIndex.h>
 
@@ -46,7 +46,7 @@ public:
     }
     virtual QIcon icon() const override
     {
-        return MMC->getThemedIcon("flame");
+        return GMC->getThemedIcon("flame");
     }
     virtual QString id() const override
     {

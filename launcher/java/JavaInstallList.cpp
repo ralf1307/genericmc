@@ -22,7 +22,7 @@
 #include "java/JavaInstallList.h"
 #include "java/JavaCheckerJob.h"
 #include "java/JavaUtils.h"
-#include "MMCStrings.h"
+#include "GMCStrings.h"
 #include "minecraft/VersionFilterData.h"
 
 JavaInstallList::JavaInstallList(QObject *parent) : BaseVersionList(parent)

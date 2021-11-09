@@ -21,7 +21,7 @@
 #include "pages/BasePage.h"
 
 #include "minecraft/auth/AccountList.h"
-#include "MultiMC.h"
+#include "GenericMC.h"
 
 namespace Ui
 {
@@ -43,10 +43,10 @@ public:
     }
     QIcon icon() const override
     {
-        auto icon = MMC->getThemedIcon("accounts");
+        auto icon = GMC->getThemedIcon("accounts");
         if(icon.isNull())
         {
-            icon = MMC->getThemedIcon("noaccount");
+            icon = GMC->getThemedIcon("noaccount");
         }
         return icon;
     }

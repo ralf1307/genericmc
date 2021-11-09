@@ -32,9 +32,9 @@ public:
     QString UPDATER_BASE;
 
     /// User-Agent to use.
-    QString USER_AGENT = "MultiMC/5.0";
+    QString USER_AGENT = "GenericMC/5.0";
     /// User-Agent to use for uncached requests.
-    QString USER_AGENT_UNCACHED = "MultiMC/5.0 (Uncached)";
+    QString USER_AGENT_UNCACHED = "GenericMC/5.0 (Uncached)";
 
     /// Google analytics ID
     QString ANALYTICS_ID;
@@ -56,7 +56,7 @@ public:
 
     /**
      * This is used to fetch the news RSS feed.
-     * It defaults in CMakeLists.txt to "https://multimc.org/rss.xml"
+     * It defaults in CMakeLists.txt.
      */
     QString NEWS_RSS_URL;
 
@@ -71,7 +71,7 @@ public:
     QString IMGUR_CLIENT_ID;
 
     /**
-     * MultiMC Metadata repository URL prefix
+     * GenericMC Metadata repository URL prefix
      */
     QString META_URL;
 

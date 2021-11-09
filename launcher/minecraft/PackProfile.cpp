@@ -247,7 +247,7 @@ void PackProfile::scheduleSave()
 
 QString PackProfile::componentsFilePath() const
 {
-    return FS::PathCombine(d->m_instance->instanceRoot(), "mmc-pack.json");
+    return FS::PathCombine(d->m_instance->instanceRoot(), "gmc-pack.json");
 }
 
 QString PackProfile::patchesPattern() const

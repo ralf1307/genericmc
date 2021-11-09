@@ -17,7 +17,7 @@
 
 #include "launch/LaunchTask.h"
 #include "MessageLevel.h"
-#include "MMCStrings.h"
+#include "GMCStrings.h"
 #include "java/JavaChecker.h"
 #include "tasks/Task.h"
 #include <QDebug>
