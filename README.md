@@ -26,7 +26,9 @@ Translations can be currently done upstream. At some point it's going to get for
 
 ## License
 Copyright &copy; 2013-2021 MultiMC Contributors
+
 Copyright &copy; 2021 Ralf Rachinger
+
 Copyright &copy; 2021 GenericMC Contributors
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this program except in compliance with the License. You may obtain a copy of the License at [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0).
