@@ -600,8 +600,6 @@ SET(MULTIMC_SOURCES
     # GUI - setup wizard
     setupwizard/SetupWizard.h
     setupwizard/SetupWizard.cpp
-    setupwizard/AnalyticsWizardPage.cpp
-    setupwizard/AnalyticsWizardPage.h
     setupwizard/BaseWizardPage.h
     setupwizard/JavaWizardPage.cpp
     setupwizard/JavaWizardPage.h
@@ -916,7 +914,6 @@ target_link_libraries(MultiMC_logic
     hoedown
     MultiMC_rainbow
     LocalPeer
-    ganalytics
 )
 
 add_executable(MultiMC MACOSX_BUNDLE WIN32 main.cpp ${MULTIMC_RCS})

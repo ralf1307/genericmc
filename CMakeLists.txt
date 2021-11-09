@@ -72,15 +72,6 @@ set(MultiMC_NOTIFICATION_URL "" CACHE STRING "URL for checking for notifications
 # The metadata server
 set(MultiMC_META_URL "https://meta.multimc.org/v1/" CACHE STRING "URL to fetch MultiMC's meta files from.")
 
-# paste.ee API key
-set(MultiMC_PASTE_EE_API_KEY "utLvciUouSURFzfjPxLBf5W4ISsUX4pwBDF7N1AfZ" CACHE STRING "API key you can get from paste.ee when you register an account")
-
-# Imgur API Client ID
-set(MultiMC_IMGUR_CLIENT_ID "5b97b0713fba4a3" CACHE STRING "Client ID you can get from Imgur when you register an application")
-
-# Google analytics ID
-set(MultiMC_ANALYTICS_ID "UA-87731965-2" CACHE STRING "ID you can get from Google analytics")
-
 # Bug tracker URL
 set(MultiMC_BUG_TRACKER_URL "" CACHE STRING "URL for the bug tracker.")
 
@@ -268,7 +259,6 @@ set(NBT_NAME MultiMC_nbt++)
 set(NBT_DEST_DIR ${LIBRARY_DEST_DIR})
 add_subdirectory(libraries/libnbtplusplus)
 
-add_subdirectory(libraries/ganalytics) # google analytics library
 add_subdirectory(libraries/systeminfo) # system information library
 add_subdirectory(libraries/hoedown) # markdown parser
 add_subdirectory(libraries/launcher) # java based launcher part for Minecraft
