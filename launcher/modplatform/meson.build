@@ -1,0 +1,5 @@
+subdir('atlauncher')
+subdir('flame')
+subdir('legacy_ftb')
+subdir('modpacksch')
+subdir('technic')

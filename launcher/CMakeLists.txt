@@ -605,6 +605,8 @@ SET(GENERICMC_SOURCES
     setupwizard/JavaWizardPage.h
     setupwizard/LanguageWizardPage.cpp
     setupwizard/LanguageWizardPage.h
+    setupwizard/MSAWizardPage.cpp
+    setupwizard/MSAWizardPage.h
 
     # GUI - themes
     themes/FusionTheme.cpp
@@ -794,6 +796,8 @@ SET(GENERICMC_SOURCES
     widgets/ProgressWidget.cpp
     widgets/WideBar.h
     widgets/WideBar.cpp
+    widgets/MSAConfigurationWidget.h
+    widgets/MSAConfigurationWidget.cpp
 
     # GUI - instance group view
     groupview/GroupedProxyModel.cpp

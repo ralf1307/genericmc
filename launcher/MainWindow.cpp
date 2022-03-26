@@ -669,7 +669,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new MainWindow
     }
 
     // Add the news label to the news toolbar.
-    {
+    /*{
         m_newsChecker.reset(new NewsChecker(BuildConfig.NEWS_RSS_URL));
         newsLabel = new QToolButton();
         newsLabel->setIcon(GMC->getThemedIcon("news"));
@@ -680,7 +680,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new MainWindow
         QObject::connect(newsLabel, &QAbstractButton::clicked, this, &MainWindow::newsButtonClicked);
         QObject::connect(m_newsChecker.get(), &NewsChecker::newsLoaded, this, &MainWindow::updateNewsLabel);
         updateNewsLabel();
-    }
+    }*/
 
     // Create the instance list widget
     {
@@ -711,13 +711,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new MainWindow
         ui->horizontalLayout->addWidget(view);
     }
     // The cat background
-    {
+    /*{
         bool cat_enable = GMC->settings()->get("TheCat").toBool();
         ui->actionCAT->setChecked(cat_enable);
         // NOTE: calling the operator like that is an ugly hack to appease ancient gcc...
         connect(ui->actionCAT.operator->(), SIGNAL(toggled(bool)), SLOT(onCatToggled(bool)));
         setCatBackground(cat_enable);
-    }
+    }*/
     // start instance when double-clicked
     connect(view, &GroupView::activated, this, &MainWindow::instanceActivated);
 
@@ -787,13 +787,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new MainWindow
     // auto accounts = GMC->accounts();
 
     // load the news
-    {
+    /*{
         m_newsChecker->reloadNews();
         updateNewsLabel();
-    }
+    }*/
 
 
-    if(BuildConfig.UPDATER_ENABLED)
+    /*if(BuildConfig.UPDATER_ENABLED)
     {
         bool updatesAllowed = GMC->updatesAreAllowed();
         updatesAllowedChanged(updatesAllowed);
@@ -810,7 +810,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new MainWindow
         {
             updater->checkForUpdate(GMC->settings()->get("UpdateChannel").toString(), false);
         }
-    }
+    }*/
 
     {
         auto checker = new NotificationChecker();

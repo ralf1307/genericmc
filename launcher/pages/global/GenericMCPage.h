@@ -42,19 +42,19 @@ public:
 
     QString displayName() const override
     {
-        return "MultiMC";
+        return "GenericMC";
     }
     QIcon icon() const override
     {
-        return GMC->getThemedIcon("multimc");
+        return GMC->getThemedIcon("genericmc");
     }
     QString id() const override
     {
-        return "multimc-settings";
+        return "genericmc-settings";
     }
     QString helpPage() const override
     {
-        return "MultiMC-settings";
+        return "GenericMC-settings";
     }
     bool apply() override;
 

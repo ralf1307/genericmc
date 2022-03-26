@@ -26,6 +26,7 @@
 #include "setupwizard/SetupWizard.h"
 #include "setupwizard/LanguageWizardPage.h"
 #include "setupwizard/JavaWizardPage.h"
+#include "setupwizard/MSAWizardPage.h"
 
 #include <iostream>
 #include <QDir>
@@ -501,7 +502,10 @@ GenericMC::GenericMC(int &argc, char **argv) : QApplication(argc, argv)
         ENV.setJarsPath( TOSTRING(GenericMC_JARS_LOCATION) );
 #endif
 
-        qDebug() << "GenericMC 5, (c) 2013-2021 GenericMC Contributors";
+        qDebug() << "GenericMC 5";
+        qDebug() << " (c) 2021 GenericMC Contributors";
+        qDebug() << " (c) 2021 Ralf Rachinger";
+        qDebug() << " (c) 2013-2021 MultiMC Contributors";
         qDebug() << "Version                    : " << BuildConfig.printableVersionString();
         qDebug() << "Git commit                 : " << BuildConfig.GIT_COMMIT;
         qDebug() << "Git refspec                : " << BuildConfig.GIT_REFSPEC;
@@ -872,7 +876,14 @@ bool GenericMC::createSetupWizard()
             return true;
         return false;
     }();
-    bool wizardRequired = javaRequired || languageRequired;
+    bool msaRequired = [&]()
+    {
+        if (settings()->get("MSA-Type").toString().isEmpty())
+            return true;
+        return false;
+    }();
+
+    bool wizardRequired = javaRequired || languageRequired || msaRequired;
 
     if(wizardRequired)
     {
@@ -884,6 +895,10 @@ bool GenericMC::createSetupWizard()
         if (javaRequired)
         {
             m_setupWizard->addPage(new JavaWizardPage(m_setupWizard));
+        }
+        if (msaRequired)
+        {
+            m_setupWizard->addPage(new MSAWizardPage(m_setupWizard));
         }
         connect(m_setupWizard, &QDialog::finished, this, &GenericMC::setupWizardFinished);
         m_setupWizard->show();
